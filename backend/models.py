@@ -38,6 +38,7 @@ class Cargo(Base):
 
     # Связь с заказами
     orders = relationship("Order", back_populates="cargo")
+    movements = relationship("Warehouse", back_populates="cargo")
 
 
 class Warehouse(Base):
