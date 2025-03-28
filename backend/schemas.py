@@ -2,19 +2,21 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class OrderBase(BaseModel):
+# Модель для создания заказа
+class OrderCreate(BaseModel):
     client_id: int
     cargo_id: int
-    quantity: int
+    status: str
     price: float
+    quantity: int
+    # Добавь другие поля, если необходимо
 
 
-class OrderCreate(OrderBase):
-    pass
-
-
-class OrderUpdate(OrderBase):
+# Модель для обновления заказа
+class OrderUpdate(BaseModel):
     client_id: Optional[int] = None
     cargo_id: Optional[int] = None
-    quantity: Optional[int] = None
+    status: Optional[str] = None
     price: Optional[float] = None
+    quantity: Optional[int] = None
+    # Добавь другие поля, которые можно обновлять
