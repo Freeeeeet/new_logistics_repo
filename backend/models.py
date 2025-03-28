@@ -38,7 +38,7 @@ class Cargo(Base):
 
     # Связь с заказами
     orders = relationship("Order", back_populates="cargo")
-    movements = relationship("Warehouse", back_populates="cargo")
+    cargo_movements = relationship("CargoMovement", back_populates="cargo")
 
 
 class Warehouse(Base):
@@ -49,8 +49,8 @@ class Warehouse(Base):
     location = Column(String(255))
 
     # Связь с движением грузов
-    cargo = relationship("Cargo", back_populates="movements")
-    warehouse = relationship("Warehouse", back_populates="movements")
+    cargo_movements = relationship("CargoMovement", back_populates="warehouse")
+    orders = relationship("Order", back_populates="warehouse")
 
 
 class Route(Base):
@@ -101,15 +101,15 @@ class Order(Base):
     # Связи с другими моделями
     client = relationship("Client", back_populates="orders")
     cargo = relationship("Cargo", back_populates="orders")
-    warehouse = relationship("Warehouse", back_populates="cargo_movements")
+    warehouse = relationship("Warehouse", back_populates="orders")
     route = relationship("Route", back_populates="orders")
     status = relationship("OrderStatus", back_populates="orders")
 
     # Связь с назначениями заказов
-    assignments = relationship("OrderAssignment", back_populates="order")
+    assignments = relationship("OrderAssignment", back_populates="orders")
 
     # Связь с оплатами
-    payments = relationship("Payment", back_populates="order")
+    payments = relationship("Payment", back_populates="orders")
 
 
 class OrderAssignment(Base):
@@ -123,7 +123,7 @@ class OrderAssignment(Base):
     end_date = Column(TIMESTAMP)
 
     # Связи с другими моделями
-    order = relationship("Order", back_populates="assignments")
+    orders = relationship("Order", back_populates="assignments")
     driver = relationship("Driver", back_populates="assignments")
     vehicle = relationship("Vehicle", back_populates="assignments")
 
@@ -150,4 +150,4 @@ class Payment(Base):
     payment_date = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
 
     # Связь с заказами
-    order = relationship("Order", back_populates="payments")
+    orders = relationship("Order", back_populates="payments")
