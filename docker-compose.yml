@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: logistics_db
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "42641:5432"
+    volumes:
+      - logistics_pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - logistics_network
+
+  backend:
+    build: ./backend  # Путь до папки с Dockerfile
+    container_name: backend
+    ports:
+      - "12743:5000"  # Открываем порт для Flask-приложения
+    env_file:
+      - .env
+    networks:
+      - logistics_network
+    depends_on:
+      - db         
+volumes:
+  logistics_pgdata:
+
+networks:
+  logistics_network:
+    driver: bridge    
