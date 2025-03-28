@@ -1,15 +1,20 @@
 from pydantic import BaseModel
-from datetime import datetime
+from typing import Optional
 
-class OrderCreate(BaseModel):
+
+class OrderBase(BaseModel):
     client_id: int
     cargo_id: int
+    quantity: int
+    price: float
 
-class OrderResponse(BaseModel):
-    id: int
-    client_id: int
-    cargo_id: int
-    created_at: datetime
 
-    class Config:
-        from_attributes = True
+class OrderCreate(OrderBase):
+    pass
+
+
+class OrderUpdate(OrderBase):
+    client_id: Optional[int] = None
+    cargo_id: Optional[int] = None
+    quantity: Optional[int] = None
+    price: Optional[float] = None

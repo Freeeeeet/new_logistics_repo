@@ -1,22 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import Order
-from database import get_db  # Функция для получения соединения с БД
+from database import get_db
+from pydantic import BaseModel
+from schemas import OrderCreate, OrderUpdate  # Убедись, что импортируешь нужные модели
 
 router = APIRouter()
 
 
-# Пример получения всех заказов
+# Получение всех заказов
 @router.get("/")
 async def get_orders(db: AsyncSession = Depends(get_db)):
     async with db.begin():
         result = await db.execute(select(Order))
-        orders = result.scalars().all()  # Получаем все заказы
+        orders = result.scalars().all()
     return orders
 
 
-# Пример создания нового заказа
+# Создание нового заказа
 @router.post("/")
 async def create_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     new_order = Order(**order.dict())
@@ -25,7 +27,7 @@ async def create_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     return new_order
 
 
-# Пример получения конкретного заказа по ID
+# Получение одного заказа по ID
 @router.get("/{order_id}")
 async def get_order(order_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Order).filter(Order.id == order_id))
@@ -35,7 +37,7 @@ async def get_order(order_id: int, db: AsyncSession = Depends(get_db)):
     return order
 
 
-# Пример обновления заказа
+# Обновление заказа
 @router.put("/{order_id}")
 async def update_order(order_id: int, order: OrderUpdate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Order).filter(Order.id == order_id))
@@ -51,7 +53,7 @@ async def update_order(order_id: int, order: OrderUpdate, db: AsyncSession = Dep
     return db_order
 
 
-# Пример удаления заказа
+# Удаление заказа
 @router.delete("/{order_id}")
 async def delete_order(order_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Order).filter(Order.id == order_id))

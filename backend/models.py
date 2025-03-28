@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Float
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -22,9 +22,10 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
-    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
-    cargo_id = Column(Integer, ForeignKey("cargo.id"), nullable=False)
-    created_at = Column(DateTime, default=func.now())
+    client_id = Column(Integer, ForeignKey("clients.id"))
+    cargo_id = Column(Integer, ForeignKey("cargo.id"))
+    quantity = Column(Integer)
+    price = Column(Float)
 
-    client = relationship("Client")
-    cargo = relationship("Cargo")
+    client = relationship("Client", back_populates="orders")
+    cargo = relationship("Cargo", back_populates="orders")
