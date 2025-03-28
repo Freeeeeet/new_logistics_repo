@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from backend.database import engine
-from backend.models import Base
-from backend.routes import orders
+from database import engine
+from models import Base
+from routes import orders
 
 app = FastAPI()
 
