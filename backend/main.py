@@ -3,9 +3,9 @@ from database import engine
 from models import Base
 from routes import orders
 
-app = FastAPI()
+app = FastAPI(root_path="logistics/api")
 
-app.include_router(orders.router)
+app.include_router(orders.router, prefix="/orders", tags=["orders"])
 
 
 # Создание таблиц при старте (только для отладки)

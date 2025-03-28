@@ -7,7 +7,8 @@ from schemas import OrderCreate, OrderResponse
 
 router = APIRouter()
 
-@router.post("/api/orders", response_model=OrderResponse)
+
+@router.post("/", response_model=OrderResponse)
 async def create_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     new_order = Order(client_id=order.client_id, cargo_id=order.cargo_id)
     db.add(new_order)
@@ -15,7 +16,8 @@ async def create_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     await db.refresh(new_order)
     return new_order
 
-@router.get("/api/orders-with-client-cargo")
+
+@router.get("/orders-with-client-cargo")
 async def get_orders(db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Order.id, Client.name, Cargo.description)
