@@ -4,7 +4,7 @@ from database import engine
 from models import Base
 from routes import orders  # Подключаем другие маршруты
 
-app = FastAPI(root_path="logistics/api")
+app = FastAPI(root_path="/logistics/api")
 
 # Настройка CORS
 app.add_middleware(
