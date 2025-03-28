@@ -8,12 +8,12 @@ from typing import List
 router = APIRouter()
 
 
-@router.get("/orders", response_model=List[Order])
+@router.get("/", response_model=List[Order])
 async def read_orders(db: AsyncSession = Depends(get_db)):
     return await get_all_orders(db)
 
 
-@router.get("/orders/{order_id}", response_model=Order)
+@router.get("/{order_id}", response_model=Order)
 async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     order = await get_order_by_id(db, order_id)
     if order is None:
@@ -21,12 +21,12 @@ async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     return order
 
 
-@router.post("/orders", response_model=Order)
+@router.post("/create", response_model=Order)
 async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     return await create_order(db, order)
 
 
-@router.put("/orders/{order_id}", response_model=Order)
+@router.put("/{order_id}", response_model=Order)
 async def update_existing_order(order_id: int, order_update: OrderUpdate, db: AsyncSession = Depends(get_db)):
     order = await update_order(db, order_id, order_update)
     if order is None:
@@ -34,7 +34,7 @@ async def update_existing_order(order_id: int, order_update: OrderUpdate, db: As
     return order
 
 
-@router.delete("/orders/{order_id}")
+@router.delete("/{order_id}")
 async def delete_existing_order(order_id: int, db: AsyncSession = Depends(get_db)):
     order = await delete_order(db, order_id)
     if order is None:

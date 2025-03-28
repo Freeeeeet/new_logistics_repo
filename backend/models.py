@@ -1,4 +1,6 @@
 # models.py
+import datetime
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, TIMESTAMP
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -96,7 +98,7 @@ class Order(Base):
     warehouse_id = Column(Integer, ForeignKey('warehouses.id'), nullable=True)
     route_id = Column(Integer, ForeignKey('routes.id'), nullable=False)
     status_id = Column(Integer, ForeignKey('order_statuses.id'), nullable=False)
-    created_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    created_at = Column(TIMESTAMP, default=datetime.datetime.now())
 
     # Связи с другими моделями
     client = relationship("Client", back_populates="orders")
