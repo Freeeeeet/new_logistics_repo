@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
 
+
 class OrderStatus(Base):
     __tablename__ = 'order_statuses'
 
@@ -47,7 +48,8 @@ class Warehouse(Base):
     location = Column(String(255))
 
     # Связь с движением грузов
-    cargo_movements = relationship("CargoMovement", back_populates="warehouse")
+    cargo = relationship("Cargo", back_populates="movements")
+    warehouse = relationship("Warehouse", back_populates="movements")
 
 
 class Route(Base):
