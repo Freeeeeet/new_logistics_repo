@@ -1,37 +1,42 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from models import Order
 from schemas import OrderCreate, OrderUpdate
 
 
-def get_all_orders(db: Session):
-    return db.query(Order).all()
+async def get_all_orders(db: AsyncSession):
+    result = await db.execute(select(Order))
+    return result.scalars().all()
 
 
-def get_order_by_id(db: Session, order_id: int):
-    return db.query(Order).filter(Order.id == order_id).first()
+async def get_order_by_id(db: AsyncSession, order_id: int):
+    result = await db.execute(select(Order).filter(Order.id == order_id))
+    return result.scalars().first()
 
 
-def create_order(db: Session, order: OrderCreate):
+async def create_order(db: AsyncSession, order: OrderCreate):
     db_order = Order(**order.dict())
     db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
+    await db.commit()
+    await db.refresh(db_order)
     return db_order
 
 
-def update_order(db: Session, order_id: int, order_update: OrderUpdate):
-    db_order = db.query(Order).filter(Order.id == order_id).first()
+async def update_order(db: AsyncSession, order_id: int, order_update: OrderUpdate):
+    result = await db.execute(select(Order).filter(Order.id == order_id))
+    db_order = result.scalars().first()
     if db_order:
         for key, value in order_update.dict().items():
             setattr(db_order, key, value)
-        db.commit()
-        db.refresh(db_order)
+        await db.commit()
+        await db.refresh(db_order)
     return db_order
 
 
-def delete_order(db: Session, order_id: int):
-    db_order = db.query(Order).filter(Order.id == order_id).first()
+async def delete_order(db: AsyncSession, order_id: int):
+    result = await db.execute(select(Order).filter(Order.id == order_id))
+    db_order = result.scalars().first()
     if db_order:
-        db.delete(db_order)
-        db.commit()
+        await db.delete(db_order)
+        await db.commit()
     return db_order
