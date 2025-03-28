@@ -16,16 +16,18 @@ services:
       - logistics_network
 
   backend:
-    build: ./backend  # Путь до папки с Dockerfile
+    build: ./backend
     container_name: backend
     ports:
-      - "12743:5000"  # Открываем порт для Flask-приложения
+      - "12743:8000"  # Открываем порт для Flask-приложения
     env_file:
       - .env
     networks:
       - logistics_network
     depends_on:
-      - db         
+      - db
+    volumes:
+      - ./backend:/app
 volumes:
   logistics_pgdata:
 
