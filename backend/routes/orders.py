@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from schemas import Order, OrderCreate, OrderUpdate, OrderCreateFull
 
-from crud.orders_crud import get_all_orders, get_order_by_id, create_order, update_order, delete_order, create_order_full
+from crud.orders_crud import get_all_orders, get_order_by_id, create_order, update_order, delete_order
 from typing import List
 
 router = APIRouter()
