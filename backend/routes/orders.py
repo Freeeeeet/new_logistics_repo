@@ -14,13 +14,6 @@ async def read_orders(db: AsyncSession = Depends(get_db)):
     return await get_all_orders(db)
 
 
-@router.post("/create", response_model=Order)
-async def create_order(order_data: OrderCreateFull, db: AsyncSession = Depends(get_db)):
-    try:
-        return await create_order_full(db, order_data)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
 @router.get("/{order_id}", response_model=Order)
 async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     order = await get_order_by_id(db, order_id)
@@ -29,7 +22,7 @@ async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     return order
 
 
-@router.post("/create-only-order", response_model=Order)
+@router.post("/create", response_model=Order)
 async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
     return await create_order(db, order)
 

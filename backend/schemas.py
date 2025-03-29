@@ -104,13 +104,16 @@ class OrderAssignment(OrderAssignmentBase):
 # --- Клиенты ---
 class ClientBase(BaseModel):
     name: str
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     phone: Optional[str] = None
-
 
 class ClientCreate(ClientBase):
     pass
 
+class ClientUpdate(ClientBase):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
 class Client(ClientBase):
     id: int
@@ -144,15 +147,17 @@ class RouteBase(BaseModel):
     distance: condecimal(max_digits=10, decimal_places=2)
 
 
-class RouteCreate(RouteBase):
-    pass
+class RouteCreate(BaseModel):
+    start_location: str
+    end_location: str
+    distance: float
 
-
-class Route(RouteBase):
+class Route(RouteCreate):
     id: int
 
     class Config:
         from_attributes = True
+
 
 # --- Заказы ---
 class OrderBase(BaseModel):
@@ -160,14 +165,17 @@ class OrderBase(BaseModel):
     cargo_id: int
     warehouse_id: Optional[int] = None
     route_id: int
-    status_id: int = 1
+    status_id: int
 
 
-class OrderCreateFull(BaseModel):
-    client: Union[int, ClientCreate]
+class OrderCreateFull(OrderBase):
     cargo: CargoCreate
-    route: Union[int, RouteCreate]
-    warehouse_id: Optional[int] = None
+    route: RouteCreate
+
+
+
+
+
 
 
 
