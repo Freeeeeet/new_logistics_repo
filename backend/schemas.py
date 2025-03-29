@@ -46,3 +46,28 @@ class Cargo(CargoBase):
 
     class Config:
         from_attributes = True
+
+class OrderAssignmentBase(BaseModel):
+    order_id: int
+    driver_id: int
+    vehicle_id: int
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+
+
+class OrderAssignmentCreate(OrderAssignmentBase):
+    pass
+
+
+class OrderAssignmentUpdate(BaseModel):
+    driver_id: Optional[int] = None
+    vehicle_id: Optional[int] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+
+
+class OrderAssignment(OrderAssignmentBase):
+    id: int
+
+    class Config:
+        from_attributes = True
