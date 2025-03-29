@@ -3,25 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logistics App</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Логистика</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Добро пожаловать в логистическую систему</h1>
+    <div class="tabs">
+        <button class="tab-button" onclick="showTab('clients-tab')">Клиенты</button>
+        <button class="tab-button" onclick="showTab('orders-tab')">Заказы</button>
+        <button class="tab-button" onclick="showTab('routes-tab')">Маршруты</button>
+    </div>
 
-    <h2>Создать новый заказ</h2>
-    <form id="orderForm">
-        <label for="client">Client ID:</label>
-        <input type="number" id="client" name="client_id" required><br><br>
+    <div id="clients-tab" class="tab-content">
+        <h2>Управление клиентами</h2>
+        <form id="client-form">
+            <input type="text" id="client-name" placeholder="Имя клиента" required>
+            <input type="email" id="client-email" placeholder="Email клиента" required>
+            <input type="tel" id="client-phone" placeholder="Телефон клиента" required>
+            <button type="submit">Создать клиента</button>
+        </form>
+        <ul id="clients-list"></ul>
+    </div>
 
-        <label for="cargo">Cargo Description:</label>
-        <input type="text" id="cargo" name="cargo_description" required><br><br>
+    <div id="orders-tab" class="tab-content">
+        <h2>Управление заказами</h2>
+        <p>Здесь будет функционал для создания и редактирования заказов.</p>
+    </div>
 
-        <label for="route">Route ID:</label>
-        <input type="number" id="route" name="route_id" required><br><br>
-
-        <button type="submit">Создать заказ</button>
-    </form>
+    <div id="routes-tab" class="tab-content">
+        <h2>Управление маршрутами</h2>
+        <p>Здесь будет функционал для управления маршрутами.</p>
+    </div>
 
     <script src="script.js"></script>
 </body>
