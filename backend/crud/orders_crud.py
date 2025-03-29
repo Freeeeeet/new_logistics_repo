@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import Order
-from schemas import OrderCreate, OrderUpdate
+from models import Order, Client, Cargo
+from schemas import OrderCreate, OrderUpdate, OrderCreateFull
 
 
 async def get_all_orders(db: AsyncSession):
@@ -40,3 +40,39 @@ async def delete_order(db: AsyncSession, order_id: int):
         await db.delete(db_order)
         await db.commit()
     return db_order
+
+async def create_order_full(db: AsyncSession, order_data: OrderCreateFull):
+    # Проверяем клиента
+    if isinstance(order_data.client, int):
+        client = await db.get(Client, order_data.client)
+        if not client:
+            raise ValueError("Клиент с таким ID не найден")
+    else:
+        client = Client(**order_data.client.model_dump())
+        db.add(client)
+        await db.flush()  # Получаем client.id
+
+    # Проверяем груз
+    if isinstance(order_data.cargo, int):
+        cargo = await db.get(Cargo, order_data.cargo)
+        if not cargo:
+            raise ValueError("Груз с таким ID не найден")
+    else:
+        cargo = Cargo(**order_data.cargo.model_dump())
+        db.add(cargo)
+        await db.flush()  # Получаем cargo.id
+
+    # Создаем заказ
+    new_order = Order(
+        client_id=client.id,
+        cargo_id=cargo.id,
+        warehouse_id=order_data.warehouse_id,
+        route_id=order_data.route_id,
+        status_id=order_data.status_id,
+    )
+
+    db.add(new_order)
+    await db.commit()
+    await db.refresh(new_order)
+
+    return new_order

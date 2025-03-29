@@ -1,6 +1,6 @@
-from pydantic import BaseModel, condecimal, field_validator
+from pydantic import BaseModel, condecimal, field_validator, EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 
 class OrderBase(BaseModel):
@@ -100,3 +100,45 @@ class OrderAssignment(OrderAssignmentBase):
 
     class Config:
         from_attributes = True
+
+# --- Клиенты ---
+class ClientBase(BaseModel):
+    name: str
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+
+
+class ClientCreate(ClientBase):
+    pass
+
+
+class Client(ClientBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+# --- Грузы ---
+class CargoBase(BaseModel):
+    description: Optional[str] = None
+    weight: condecimal(max_digits=10, decimal_places=2)
+    volume: condecimal(max_digits=10, decimal_places=2)
+
+
+# --- Заказы ---
+class OrderBase(BaseModel):
+    client_id: int
+    cargo_id: int
+    warehouse_id: Optional[int] = None
+    route_id: int
+    status_id: int
+
+
+class OrderCreateFull(BaseModel):
+    client: Union[int, ClientCreate]
+    cargo: Union[int, CargoCreate]
+    warehouse_id: Optional[int] = None
+    route_id: int
+    status_id: int
+
