@@ -1,4 +1,4 @@
-const apiUrl = 'http://ts.jijathecat.space/logistics/api';  // Используем домен для бэкенда
+const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Используем домен для бэкенда
 
 // Переключение вкладок
 function showTab(tabId) {
