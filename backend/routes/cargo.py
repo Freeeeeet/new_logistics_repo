@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=schemas.Cargo)
-def create_cargo(cargo: schemas.CargoCreate, db: Session = Depends(get_db)):
+def add_cargo(cargo: schemas.CargoCreate, db: Session = Depends(get_db)):
     return create_cargo(db=db, cargo=cargo)
 
 
@@ -27,7 +27,7 @@ def read_cargos(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
 
 
 @router.put("/{cargo_id}", response_model=schemas.Cargo)
-def update_cargo(cargo_id: int, cargo_update: schemas.CargoUpdate, db: Session = Depends(get_db)):
+def edit_cargo(cargo_id: int, cargo_update: schemas.CargoUpdate, db: Session = Depends(get_db)):
     cargo = update_cargo(db=db, cargo_id=cargo_id, cargo_update=cargo_update)
     if cargo is None:
         raise HTTPException(status_code=404, detail="Cargo not found")
@@ -35,7 +35,7 @@ def update_cargo(cargo_id: int, cargo_update: schemas.CargoUpdate, db: Session =
 
 
 @router.delete("/{cargo_id}", response_model=schemas.Cargo)
-def delete_cargo(cargo_id: int, db: Session = Depends(get_db)):
+def delete_cargo_endpoint(cargo_id: int, db: Session = Depends(get_db)):
     cargo = delete_cargo(db=db, cargo_id=cargo_id)
     if cargo is None:
         raise HTTPException(status_code=404, detail="Cargo not found")
