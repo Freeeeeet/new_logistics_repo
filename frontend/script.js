@@ -1,4 +1,4 @@
-const apiUrl = 'http://backend:8000';  // Используем имя контейнера бэкенда
+const apiUrl = 'http://ts.jijathecat.space/logistics/api';  // Используем домен для бэкенда
 
 // Переключение вкладок
 function showTab(tabId) {
