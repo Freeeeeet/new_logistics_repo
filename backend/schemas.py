@@ -107,19 +107,24 @@ class ClientBase(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
 
-class ClientCreate(ClientBase):
-    pass
+class ClientCreate(BaseModel):
+    name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
 class ClientUpdate(ClientBase):
     name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
 
-class Client(ClientBase):
+class Client(BaseModel):
     id: int
+    name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # --- Грузы ---

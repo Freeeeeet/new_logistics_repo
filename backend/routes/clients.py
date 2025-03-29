@@ -11,6 +11,10 @@ router = APIRouter()
 async def create_client_endpoint(client_data: ClientCreate, db: AsyncSession = Depends(get_db)):
     return await create_client(db, client_data)
 
+@router.get("/", response_model=list[Client])
+async def get_clients_endpoint(offset: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    return await get_clients(db, offset, limit)
+
 @router.get("/{client_id}", response_model=Client)
 async def get_client_endpoint(client_id: int, db: AsyncSession = Depends(get_db)):
     return await get_client(db, client_id)
@@ -23,3 +27,4 @@ async def update_client_endpoint(client_id: int, client_data: ClientUpdate, db: 
 async def delete_client_endpoint(client_id: int, db: AsyncSession = Depends(get_db)):
     await delete_client(db, client_id)
     return {"message": "Client deleted successfully"}
+
