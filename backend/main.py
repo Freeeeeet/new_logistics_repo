@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 from models import Base
-from routes import orders  # Подключаем другие маршруты
+from routes import orders, cargo  # Подключаем другие маршруты
 
 app = FastAPI(root_path="/logistics/api")
 
@@ -18,7 +18,7 @@ app.add_middleware(
 # Подключаем маршруты
 app.include_router(orders.router, prefix="/orders", tags=["orders"])
 # app.include_router(clients.router, prefix="/clients", tags=["clients"])
-# app.include_router(cargo.router, prefix="/cargo", tags=["cargo"])
+app.include_router(cargo.router, prefix="/cargo", tags=["cargo"])
 
 
 # Создание таблиц при старте (только для отладки)
