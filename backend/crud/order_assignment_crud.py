@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import OrderAssignment
-from schemas import OrderAssignmentCreate, OrderAssignmentUpdate, Order
+from models import OrderAssignment, Order
+from schemas import OrderAssignmentCreate, OrderAssignmentUpdate
 from fastapi import HTTPException
 
 
