@@ -126,19 +126,48 @@ class CargoBase(BaseModel):
     volume: condecimal(max_digits=10, decimal_places=2)
 
 
+class CargoCreate(CargoBase):
+    pass
+
+
+class Cargo(CargoBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+# --- Маршруты ---
+class RouteBase(BaseModel):
+    origin: str
+    destination: str
+    distance: condecimal(max_digits=10, decimal_places=2)
+
+
+class RouteCreate(RouteBase):
+    pass
+
+
+class Route(RouteBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 # --- Заказы ---
 class OrderBase(BaseModel):
     client_id: int
     cargo_id: int
     warehouse_id: Optional[int] = None
     route_id: int
-    status_id: int
+    status_id: int = 1
 
 
 class OrderCreateFull(BaseModel):
     client: Union[int, ClientCreate]
-    cargo: Union[int, CargoCreate]
+    cargo: CargoCreate
+    route: Union[int, RouteCreate]
     warehouse_id: Optional[int] = None
-    route_id: int
-    status_id: int
+
+
 

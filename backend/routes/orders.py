@@ -29,9 +29,9 @@ async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     return order
 
 
-# @router.post("/create", response_model=Order)
-# async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
-#     return await create_order(db, order)
+@router.post("/create-only-order", response_model=Order)
+async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
+    return await create_order(db, order)
 
 
 @router.put("/{order_id}", response_model=Order)

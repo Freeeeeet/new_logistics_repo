@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import Order, Client, Cargo
+from models import Order, Client, Cargo, Route
 from schemas import OrderCreate, OrderUpdate, OrderCreateFull
 
 
@@ -52,23 +52,28 @@ async def create_order_full(db: AsyncSession, order_data: OrderCreateFull):
         db.add(client)
         await db.flush()  # Получаем client.id
 
-    # Проверяем груз
-    if isinstance(order_data.cargo, int):
-        cargo = await db.get(Cargo, order_data.cargo)
-        if not cargo:
-            raise ValueError("Груз с таким ID не найден")
+    # Создаем новый груз
+    cargo = Cargo(**order_data.cargo.model_dump())
+    db.add(cargo)
+    await db.flush()  # Получаем cargo.id
+
+    # Проверяем маршрут
+    if isinstance(order_data.route, int):
+        route = await db.get(Route, order_data.route)
+        if not route:
+            raise ValueError("Маршрут с таким ID не найден")
     else:
-        cargo = Cargo(**order_data.cargo.model_dump())
-        db.add(cargo)
-        await db.flush()  # Получаем cargo.id
+        route = Route(**order_data.route.model_dump())
+        db.add(route)
+        await db.flush()  # Получаем route.id
 
     # Создаем заказ
     new_order = Order(
         client_id=client.id,
         cargo_id=cargo.id,
         warehouse_id=order_data.warehouse_id,
-        route_id=order_data.route_id,
-        status_id=order_data.status_id,
+        route_id=route.id,
+        status_id=1,  # Всегда 1 при создании
     )
 
     db.add(new_order)
