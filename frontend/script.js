@@ -1,35 +1,56 @@
-document.getElementById('orderForm').addEventListener('submit', async function(event) {
-    event.preventDefault();  // Не даем форме отправиться
+// Изменяем URL для запросов на адрес бэкенда в Docker
+const apiUrl = 'http://backend:8000';  // Используем имя контейнера
 
-    const clientId = document.getElementById('client').value;
-    const cargoDescription = document.getElementById('cargo').value;
-    const routeId = document.getElementById('route').value;
+document.getElementById('client-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-    // Структура данных для нового заказа
-    const orderData = {
-        client_id: clientId,
-        cargo_description: cargoDescription,
-        route_id: routeId,
-        status_id: 1  // Статус заказа (по умолчанию 1)
-    };
+  const clientName = document.getElementById('client-name').value;
+  const clientEmail = document.getElementById('client-email').value;
+  const clientPhone = document.getElementById('client-phone').value;
 
-    try {
-        // Отправка данных на бэкенд
-        const response = await fetch('http://backend:8000/orders/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
+  const newClient = {
+    name: clientName,
+    email: clientEmail,
+    phone: clientPhone
+  };
 
-        if (!response.ok) {
-            throw new Error('Ошибка при создании заказа');
-        }
+  try {
+    const response = await fetch(`${apiUrl}/clients/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newClient)
+    });
 
-        const result = await response.json();
-        alert(`Заказ создан! ID: ${result.id}`);
-    } catch (error) {
-        alert(`Ошибка: ${error.message}`);
+    if (response.ok) {
+      alert('Клиент создан!');
+      getClients(); // обновляем список клиентов
+    } else {
+      alert('Ошибка при создании клиента');
     }
+  } catch (error) {
+    console.error('Ошибка:', error);
+  }
 });
+
+// Функция для получения списка клиентов
+async function getClients() {
+  try {
+    const response = await fetch(`${apiUrl}/clients/`);
+    const clients = await response.json();
+    const clientList = document.getElementById('clients-list');
+    clientList.innerHTML = '';
+
+    clients.forEach(client => {
+      const li = document.createElement('li');
+      li.textContent = `Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}`;
+      clientList.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Ошибка:', error);
+  }
+}
+
+// Загружаем клиентов при загрузке страницы
+getClients();
