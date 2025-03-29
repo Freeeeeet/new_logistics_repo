@@ -76,6 +76,17 @@ class OrderAssignmentCreate(BaseModel):
     def parse_datetime(cls, value: str) -> datetime:
         return datetime.strptime(value, "%Y-%m-%d %H:%M")
 
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "order_id": 1,
+                "driver_id": 1,
+                "vehicle_id": 1,
+                "start_date": "2025-03-31 13:20",
+                "end_date": "2025-04-01 18:45"
+            }
+        }
+
 
 class OrderAssignmentUpdate(BaseModel):
     driver_id: Optional[int] = None

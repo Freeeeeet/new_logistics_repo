@@ -1,15 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import OrderAssignment
-from schemas import OrderAssignmentCreate, OrderAssignmentUpdate
+from schemas import OrderAssignmentCreate, OrderAssignmentUpdate, Order
+from fastapi import HTTPException
 
 
 async def create_order_assignment(db: AsyncSession, assignment: OrderAssignmentCreate):
-    db_assignment = OrderAssignment(**assignment.dict())
-    db.add(db_assignment)
+    # Проверяем, есть ли такой order_id
+    order_exists = await db.execute(select(Order).filter(Order.id == assignment.order_id))
+    if not order_exists.scalars().first():
+        raise HTTPException(status_code=400, detail="Order does not exist")
+
+    new_assignment = OrderAssignment(**assignment.model_dump())
+    db.add(new_assignment)
     await db.commit()
-    await db.refresh(db_assignment)
-    return db_assignment
+    await db.refresh(new_assignment)
+    return new_assignment
 
 
 async def get_order_assignment(db: AsyncSession, assignment_id: int):
