@@ -28,6 +28,18 @@ services:
       - db
     volumes:
       - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "53927:80"
+    networks:
+      - logistics_network
+    depends_on:
+      - backend
 volumes:
   logistics_pgdata:
 
