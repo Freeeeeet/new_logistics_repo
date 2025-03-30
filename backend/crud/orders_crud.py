@@ -65,11 +65,13 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
         )
         db.add(cargo)
 
-        # 3. Получаем статус заказа (например, 'В процессе')
+        # 3. Принудительно "флешим" транзакцию, чтобы получить ID для client и cargo
+        await db.flush()
 
+        # 4. Получаем статус заказа (например, 'В процессе')
         status = 1
 
-        # 4. Создаем новый заказ
+        # 5. Создаем новый заказ
         order_data = Order(
             client_id=client.id,
             cargo_id=cargo.id,
