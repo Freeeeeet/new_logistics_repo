@@ -80,12 +80,6 @@ async function getClients() {
                 <button onclick="editClient(${client.id})">✏️</button>
                 <button onclick="deleteClient(${client.id})">🗑️</button>`;
             clientList.appendChild(li);
-
-            // Добавляем клиентов в выпадающий список для заказов
-            const option = document.createElement('option');
-            option.value = client.id;
-            option.textContent = client.name;
-            clientSelect.appendChild(option);
         });
     } catch (error) {
         console.error('Ошибка:', error);
