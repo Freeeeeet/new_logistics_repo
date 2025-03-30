@@ -322,9 +322,11 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     const clientName = document.getElementById('order-client-name').value;
     const clientEmail = document.getElementById('order-client-email').value;
     const clientPhone = document.getElementById('order-client-phone').value;
+
     const cargoDescription = document.getElementById('cargo-input').value;
     const cargoWeight = document.getElementById('cargo-weight').value;
     const cargoVolume = document.getElementById('cargo-volume').value;
+
     const routeId = document.getElementById('order-route').value;
     const warehouseId = document.getElementById('order-warehouse').value;
 
@@ -332,7 +334,7 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         client: { name: clientName, email: clientEmail, phone: clientPhone },
         cargo: { description: cargoDescription, weight: cargoWeight, volume: cargoVolume },
         route_id: routeId,
-        warehouse_id: warehouseId,
+        warehouse_id: warehouseId
     };
 
     try {
@@ -353,6 +355,7 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         console.error('Ошибка:', error);
     }
 });
+
 
 
 function checkAndAddOption(selectId) {
