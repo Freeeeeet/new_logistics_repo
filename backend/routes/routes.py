@@ -12,9 +12,9 @@ async def create_route_endpoint(route_data: RouteCreate, db: AsyncSession = Depe
     return await create_route(db, route_data)
 
 
-@router.get("/", response_model=Route)
-async def get_routes(route_id: int, db: AsyncSession = Depends(get_db)):
-    return await get_routes(db, route_id)
+@router.get("/", response_model=list[Route])
+async def get_routes(offset: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    return await get_routes(db, offset, limit)
 
 @router.get("/{route_id}", response_model=Route)
 async def get_route_endpoint(route_id: int, db: AsyncSession = Depends(get_db)):
