@@ -27,8 +27,15 @@ class OrderCreateNorm(BaseModel):
     class Config:
         from_attributes = True
 
-class OrderUpdate(OrderBase):
-    pass
+class OrderUpdate(BaseModel):
+    client_name: str
+    client_email: str
+    client_phone: str
+    cargo_description: Optional[str]
+    cargo_weight: Optional[Decimal]
+    cargo_volume: Optional[Decimal]
+    route_id: int
+    warehouse_id: int
 
 
 class OrderWithDetails(BaseModel):

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import Order, Client, Cargo, Route, OrderStatus, Payment, Warehouse
-from schemas import OrderCreate, OrderUpdate, OrderCreateNorm
+from schemas import OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails
 from fastapi import HTTPException
 
 from datetime import datetime
@@ -129,7 +129,43 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
 
     return order_data
 
+async def update_order_full(db: AsyncSession, order_id: int, updated_order: OrderUpdate) -> OrderWithDetails:
+    # Поиск заказа по ID
+    db_order = await db.execute(select(Order).filter(Order.id == order_id))
+    db_order = db_order.scalars().first()
 
+    if not db_order:
+        raise HTTPException(status_code=404, detail="Заказ не найден")
+
+    # Обновляем поля заказа
+    db_order.client_name = updated_order.client_name
+    db_order.client_email = updated_order.client_email
+    db_order.client_phone = updated_order.client_phone
+    db_order.cargo_description = updated_order.cargo_description
+    db_order.cargo_weight = updated_order.cargo_weight
+    db_order.cargo_volume = updated_order.cargo_volume
+    db_order.route_id = updated_order.route_id
+    db_order.warehouse_id = updated_order.warehouse_id
+
+    # Сохраняем изменения
+    await db.commit()
+    await db.refresh(db_order)
+
+    # Возвращаем обновленный заказ с деталями
+    return OrderWithDetails(
+        order_id=db_order.id,
+        is_paid=db_order.is_paid,
+        client_name=db_order.client_name,
+        client_email=db_order.client_email,
+        order_status=db_order.order_status.name,  # Предполагается, что есть связь с моделью OrderStatus
+        origin=db_order.route.origin,
+        destination=db_order.route.destination,
+        warehouse_name=db_order.warehouse.name if db_order.warehouse else None,
+        warehouse_location=db_order.warehouse.location if db_order.warehouse else None,
+        cargo_description=db_order.cargo.description if db_order.cargo else None,
+        cargo_weight=db_order.cargo.weight if db_order.cargo else None,
+        cargo_volume=db_order.cargo.volume if db_order.cargo else None,
+    )
 async def update_order(db: AsyncSession, order_id: int, order_update: OrderUpdate):
     result = await db.execute(select(Order).filter(Order.id == order_id))
     db_order = result.scalars().first()
