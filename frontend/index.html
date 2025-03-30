@@ -27,9 +27,32 @@
 
     <!-- Вкладка "Заказы" -->
     <div id="orders-tab" class="tab-content">
-        <h2>Управление заказами</h2>
-        <p>Здесь будет функционал для создания и редактирования заказов.</p>
-    </div>
+    <h2>Управление заказами</h2>
+
+    <!-- Форма для создания/редактирования заказа -->
+    <form id="order-form">
+        <select id="order-client" required>
+            <option value="" disabled selected>Выберите клиента</option>
+            <!-- Список клиентов будет заполняться через JavaScript -->
+        </select>
+
+        <input type="text" id="order-cargo" placeholder="Груз (описание)" required>
+
+        <select id="order-route" required>
+            <option value="" disabled selected>Выберите маршрут</option>
+            <!-- Список маршрутов будет заполняться через JavaScript -->
+        </select>
+
+        <select id="order-warehouse" required>
+            <option value="" disabled selected>Выберите склад</option>
+            <!-- Список складов будет заполняться через JavaScript -->
+        </select>
+
+        <button type="submit">Создать заказ</button>
+    </form>
+
+    <ul id="orders-list"></ul>
+</div>
 
     <!-- Вкладка "Маршруты" -->
     <div id="routes-tab" class="tab-content">
