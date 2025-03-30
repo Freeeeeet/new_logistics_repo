@@ -179,7 +179,7 @@ async function getRoutes() {
 
         routes.forEach(route => {
             const li = document.createElement('li');
-            li.innerHTML = `Маршрут: ${route.name}, Откуда: ${route.origin}, Куда: ${route.destination}
+            li.innerHTML = `Маршрут: ${route.id}, Откуда: ${route.origin}, Куда: ${route.destination}, Расстояние: ${route.distance}
                 <button onclick="editRoute(${route.id})">✏️</button>
                 <button onclick="deleteRoute(${route.id})">🗑️</button>`;
             routeList.appendChild(li);
