@@ -182,7 +182,28 @@ class OrderCreateFull(OrderBase):
     cargo: CargoCreate
     route: RouteCreate
 
+# Схема для отображения складов
+class WarehouseBase(BaseModel):
+    name: str
+    location: str
 
+    class Config:
+        orm_mode = True
+
+# Схема для создания склада
+class WarehouseCreate(WarehouseBase):
+    pass
+
+# Схема для обновления склада
+class WarehouseUpdate(WarehouseBase):
+    pass
+
+# Схема для ответа по складам
+class Warehouse(WarehouseBase):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
 
