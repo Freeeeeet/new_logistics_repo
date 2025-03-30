@@ -334,3 +334,24 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         console.error('Ошибка:', error);
     }
 });
+
+// ===================== СКЛАДЫ =====================
+
+// Получение списка складов
+async function getWarehouses() {
+    try {
+        const response = await fetch(`${apiUrl}/warehouses/`);
+        const warehouses = await response.json();
+        const warehouseSelect = document.getElementById('order-warehouse');
+        warehouseSelect.innerHTML = '';  // Очищаем старые данные
+
+        warehouses.forEach(warehouse => {
+            const option = document.createElement('option');
+            option.value = warehouse.id;
+            option.textContent = warehouse.name;
+            warehouseSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Ошибка при получении складов:', error);
+    }
+}
