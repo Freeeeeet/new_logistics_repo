@@ -416,6 +416,33 @@ async function deleteOrder(orderId) {
 }
 
 
+function checkAndAddOption(selectId) {
+    const selectElement = document.getElementById(selectId);
+    const inputElement = document.getElementById(selectId + '-input');
+    const inputValue = inputElement.value.trim();
+
+    if (inputValue && !Array.from(selectElement.options).some(option => option.value === inputValue)) {
+        // Если введено значение и оно не существует в выпадающем списке
+        const newOption = document.createElement('option');
+        newOption.value = inputValue;
+        newOption.text = inputValue;
+        selectElement.appendChild(newOption);
+    }
+}
+
+function addNewOption(selectId, inputId) {
+    const inputValue = document.getElementById(inputId).value.trim();
+    const selectElement = document.getElementById(selectId);
+
+    if (inputValue && !Array.from(selectElement.options).some(option => option.value === inputValue)) {
+        const newOption = document.createElement('option');
+        newOption.value = inputValue;
+        newOption.text = inputValue;
+        selectElement.appendChild(newOption);
+    }
+}
+
+
 // ===================== СКЛАДЫ =====================
 
 // Получение списка складов
