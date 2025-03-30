@@ -13,6 +13,7 @@
         <button class="tab-button" onclick="showTab('routes-tab')">Маршруты</button>
     </div>
 
+    <!-- Вкладка "Клиенты" -->
     <div id="clients-tab" class="tab-content">
         <h2>Управление клиентами</h2>
         <form id="client-form">
@@ -24,14 +25,22 @@
         <ul id="clients-list"></ul>
     </div>
 
+    <!-- Вкладка "Заказы" -->
     <div id="orders-tab" class="tab-content">
         <h2>Управление заказами</h2>
         <p>Здесь будет функционал для создания и редактирования заказов.</p>
     </div>
 
+    <!-- Вкладка "Маршруты" -->
     <div id="routes-tab" class="tab-content">
         <h2>Управление маршрутами</h2>
-        <p>Здесь будет функционал для управления маршрутами.</p>
+        <form id="route-form">
+            <input type="text" id="route-name" placeholder="Название маршрута" required>
+            <input type="text" id="route-origin" placeholder="Откуда" required>
+            <input type="text" id="route-destination" placeholder="Куда" required>
+            <button type="submit">Создать маршрут</button>
+        </form>
+        <ul id="routes-list"></ul>
     </div>
 
     <script src="script.js"></script>
