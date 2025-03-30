@@ -331,10 +331,14 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     const warehouseId = document.getElementById('order-warehouse').value;
 
     const newOrder = {
-        client: { client_name: clientName, client_email: clientEmail, client_phone: clientPhone },
-        cargo: { cargo_description: cargoDescription, cargo_weight: cargoWeight, cargo_volume: cargoVolume },
-        route_id: routeId,
-        warehouse_id: warehouseId
+    client_name: clientName,
+    client_email: clientEmail,
+    client_phone: clientPhone,
+    cargo_description: cargoDescription,
+    cargo_weight: cargoWeight,
+    cargo_volume: cargoVolume,
+    route_id: routeId,
+    warehouse_id: warehouseId
     };
 
     try {
