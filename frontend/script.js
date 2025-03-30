@@ -12,8 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Переключение вкладок
 function showTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-    document.getElementById(tabId).style.display = 'block';
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.classList.add('active');
+    }
 }
 
 // ===================== КЛИЕНТЫ =====================
