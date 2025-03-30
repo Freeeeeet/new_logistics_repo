@@ -363,42 +363,35 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
 async function editOrder(orderId) {
     try {
         const response = await fetch(`${apiUrl}/orders/${orderId}`);
-        if (!response.ok) {
-            alert("Ошибка загрузки заказа");
-            return;
-        }
-
         const order = await response.json();
 
-        // Заполняем форму
-        document.getElementById('order-id').value = order.id;
-        document.getElementById('order-client-name').value = order.client.name;
-        document.getElementById('order-client-email').value = order.client.email;
-        document.getElementById('order-client-phone').value = order.client.phone;
-        document.getElementById('cargo-input').value = order.cargo.description;
-        document.getElementById('cargo-weight').value = order.cargo.weight;
-        document.getElementById('cargo-volume').value = order.cargo.volume;
+        console.log(`Выбрали заказ ID ${orderId} для редактирования`);
+
+        document.getElementById('order-client-name').value = order.client_name;
+        document.getElementById('order-client-email').value = order.client_email;
+        document.getElementById('order-client-phone').value = order.client_phone;
+        document.getElementById('cargo-input').value = order.cargo_description;
+        document.getElementById('cargo-weight').value = order.cargo_weight;
+        document.getElementById('cargo-volume').value = order.cargo_volume;
         document.getElementById('order-route').value = order.route_id;
         document.getElementById('order-warehouse').value = order.warehouse_id;
 
-        // Показываем форму редактирования
-        document.getElementById('order-form').dataset.editing = "true";
+        // Меняем кнопку на "Обновить"
+        const submitButton = document.querySelector('#order-form button');
+        submitButton.textContent = "Обновить заказ";
+        submitButton.onclick = async (event) => {
+            event.preventDefault();
+            await updateOrder(orderId);
+        };
 
     } catch (error) {
-        console.error("Ошибка загрузки заказа:", error);
+        console.error('Ошибка:', error);
     }
 }
 
-// Отправка изменений заказа
-
-document.getElementById('order-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    console.log("Отправка формы заказа...");
-
-    const isEditing = document.getElementById('order-form').dataset.editing === "true";
-    const orderId = document.getElementById('order-id').value;
-
-    const orderData = {
+// Обновление заказа
+async function updateOrder(orderId) {
+    const updatedOrder = {
         client_name: document.getElementById('order-client-name').value,
         client_email: document.getElementById('order-client-email').value,
         client_phone: document.getElementById('order-client-phone').value,
@@ -411,25 +404,23 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
 
     try {
         const response = await fetch(`${apiUrl}/orders/${orderId}`, {
-            method: isEditing ? 'PUT' : 'POST',
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
+            body: JSON.stringify(updatedOrder)
         });
 
         if (response.ok) {
-            alert(isEditing ? 'Заказ обновлён!' : 'Заказ создан!');
-            getOrders();  // Обновляем список
-            document.getElementById('order-form').reset();
-            delete document.getElementById('order-form').dataset.editing;  // Убираем флаг редактирования
+            alert('Заказ обновлён!');
+            getOrders(); // Обновляем список заказов
+            document.getElementById('order-form').reset(); // Очищаем форму
+            document.querySelector('#order-form button').textContent = "Создать заказ"; // Меняем текст кнопки
         } else {
-            alert('Ошибка при сохранении заказа');
+            alert('Ошибка при обновлении заказа');
         }
     } catch (error) {
         console.error('Ошибка:', error);
     }
-});
-
-
+}
 
 
 
