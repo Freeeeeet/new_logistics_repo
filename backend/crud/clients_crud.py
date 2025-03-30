@@ -21,7 +21,7 @@ async def get_client(db: AsyncSession, client_id: int):
     return client
 
 async def get_clients(db: AsyncSession, offset: int = 0, limit: int = 10):
-    result = await db.execute(select(Client).offset(offset).limit(limit))
+    result = await db.execute(select(Client).order_by(Client.id.desc()).offset(offset).limit(limit))
     clients = result.scalars().all()
     return clients
 
