@@ -135,7 +135,13 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
     async with db.begin():  # Начинаем транзакцию
         # Загружаем заказ вместе с платежами
         result = await db.execute(
-            select(Order).options(selectinload(Order.payments)).where(Order.id == order_id)
+            select(Order)
+            .options(
+                selectinload(Order.payments),
+                selectinload(Order.route),  # Явная загрузка маршрута
+                selectinload(Order.warehouse),  # Явная загрузка склада
+            )
+            .where(Order.id == order_id)
         )
         db_order = result.scalar_one_or_none()
 
