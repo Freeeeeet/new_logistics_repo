@@ -129,45 +129,60 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
 
     return order_data
 
+
 async def update_order_full(db: AsyncSession, order_id: int, updated_order: OrderUpdate) -> OrderWithDetails:
-    # Поиск заказа по ID
-    db_order = await db.execute(select(Order).filter(Order.id == order_id))
-    db_order = db_order.scalars().first()
+    async with db.begin():  # Начинаем транзакцию
+        # Находим заказ
+        db_order = await db.get(Order, order_id)
+        if not db_order:
+            raise HTTPException(status_code=404, detail="Заказ не найден")
 
-    if not db_order:
-        raise HTTPException(status_code=404, detail="Заказ не найден")
+        # Обновляем данные клиента, если есть изменения
+        db_client = await db.get(Client, db_order.client_id)
+        if db_client and any([updated_order.client_name, updated_order.client_email, updated_order.client_phone]):
+            if updated_order.client_name:
+                db_client.name = updated_order.client_name
+            if updated_order.client_email:
+                db_client.email = updated_order.client_email
+            if updated_order.client_phone:
+                db_client.phone = updated_order.client_phone
 
-    # Обновляем поля заказа
-    db_order.client_name = updated_order.client_name
-    db_order.client_email = updated_order.client_email
-    db_order.client_phone = updated_order.client_phone
-    db_order.cargo_description = updated_order.cargo_description
-    db_order.cargo_weight = updated_order.cargo_weight
-    db_order.cargo_volume = updated_order.cargo_volume
-    db_order.route_id = updated_order.route_id
-    db_order.warehouse_id = updated_order.warehouse_id
+        # Обновляем данные груза, если есть изменения
+        db_cargo = await db.get(Cargo, db_order.cargo_id)
+        if db_cargo and any([updated_order.cargo_description, updated_order.cargo_weight, updated_order.cargo_volume]):
+            if updated_order.cargo_description:
+                db_cargo.description = updated_order.cargo_description
+            if updated_order.cargo_weight:
+                db_cargo.weight = updated_order.cargo_weight
+            if updated_order.cargo_volume:
+                db_cargo.volume = updated_order.cargo_volume
 
-    # Сохраняем изменения
+        # Обновляем сам заказ, если изменился маршрут или склад
+        if any([updated_order.route_id, updated_order.warehouse_id]):
+            if updated_order.route_id:
+                db_order.route_id = updated_order.route_id
+            if updated_order.warehouse_id:
+                db_order.warehouse_id = updated_order.warehouse_id
+
     await db.commit()
     await db.refresh(db_order)
 
-    # Проверяем, был ли заказ оплачен (есть ли связанные платежи)
-    is_paid = 1 if db_order.payments else 0  # 1 — оплачен, 0 — не оплачен
+    # Проверяем, был ли заказ оплачен
+    is_paid = 1 if db_order.payments else 0
 
-    # Возвращаем обновленный заказ с деталями
     return OrderWithDetails(
         order_id=db_order.id,
-        is_paid=is_paid,  # Применяем проверку
-        client_name=db_order.client_name,
-        client_email=db_order.client_email,
-        order_status=db_order.status.name,  # Предполагается, что есть связь с моделью OrderStatus
+        is_paid=is_paid,
+        client_name=db_client.name if db_client else None,
+        client_email=db_client.email if db_client else None,
+        order_status=db_order.status.name,
         origin=db_order.route.origin,
         destination=db_order.route.destination,
         warehouse_name=db_order.warehouse.name if db_order.warehouse else None,
         warehouse_location=db_order.warehouse.location if db_order.warehouse else None,
-        cargo_description=db_order.cargo.description if db_order.cargo else None,
-        cargo_weight=db_order.cargo.weight if db_order.cargo else None,
-        cargo_volume=db_order.cargo.volume if db_order.cargo else None,
+        cargo_description=db_cargo.description if db_cargo else None,
+        cargo_weight=db_cargo.weight if db_cargo else None,
+        cargo_volume=db_cargo.volume if db_cargo else None,
     )
 async def update_order(db: AsyncSession, order_id: int, order_update: OrderUpdate):
     result = await db.execute(select(Order).filter(Order.id == order_id))
