@@ -359,6 +359,80 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     }
 });
 
+// Редактирование заказа
+async function editOrder(orderId) {
+    try {
+        const response = await fetch(`${apiUrl}/orders/${orderId}`);
+        if (!response.ok) {
+            alert("Ошибка загрузки заказа");
+            return;
+        }
+
+        const order = await response.json();
+
+        // Заполняем форму
+        document.getElementById('order-id').value = order.id;
+        document.getElementById('order-client-name').value = order.client.name;
+        document.getElementById('order-client-email').value = order.client.email;
+        document.getElementById('order-client-phone').value = order.client.phone;
+        document.getElementById('cargo-input').value = order.cargo.description;
+        document.getElementById('cargo-weight').value = order.cargo.weight;
+        document.getElementById('cargo-volume').value = order.cargo.volume;
+        document.getElementById('order-route').value = order.route_id;
+        document.getElementById('order-warehouse').value = order.warehouse_id;
+
+        // Показываем форму редактирования
+        document.getElementById('order-form').dataset.editing = "true";
+
+    } catch (error) {
+        console.error("Ошибка загрузки заказа:", error);
+    }
+}
+
+// Отправка изменений заказа
+
+document.getElementById('order-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    console.log("Отправка формы заказа...");
+
+    const isEditing = document.getElementById('order-form').dataset.editing === "true";
+    const orderId = document.getElementById('order-id').value;
+
+    const orderData = {
+        client_name: document.getElementById('order-client-name').value,
+        client_email: document.getElementById('order-client-email').value,
+        client_phone: document.getElementById('order-client-phone').value,
+        cargo_description: document.getElementById('cargo-input').value,
+        cargo_weight: document.getElementById('cargo-weight').value,
+        cargo_volume: document.getElementById('cargo-volume').value,
+        route_id: document.getElementById('order-route').value,
+        warehouse_id: document.getElementById('order-warehouse').value
+    };
+
+    try {
+        const response = await fetch(`${apiUrl}/orders/${orderId}`, {
+            method: isEditing ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+            alert(isEditing ? 'Заказ обновлён!' : 'Заказ создан!');
+            getOrders();  // Обновляем список
+            document.getElementById('order-form').reset();
+            delete document.getElementById('order-form').dataset.editing;  // Убираем флаг редактирования
+        } else {
+            alert('Ошибка при сохранении заказа');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+});
+
+
+
+
+
 
 
 function checkAndAddOption(selectId) {
