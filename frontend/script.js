@@ -3,6 +3,7 @@ const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Бэкенд н�
 // Ждем загрузки DOM перед выполнением
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM загружен!");
+    showTab('clients-tab');
     getClients();
     getRoutes();
     getWarehouses();  // Получаем список складов
@@ -61,12 +62,15 @@ async function getClients() {
         const response = await fetch(`${apiUrl}/clients/`);
         const clients = await response.json();
         const clientList = document.getElementById('clients-list');
+
+        // Проверка, существует ли элемент с id 'clients-list'
         if (!clientList) {
             console.error('Элемент с id "clients-list" не найден.');
             return;
         }
+
         const clientSelect = document.getElementById('order-client');
-        clientList.innerHTML = '';
+        clientList.innerHTML = ''; // Очищаем список
         clientSelect.innerHTML = '';  // Очищаем старые данные
 
         clients.forEach(client => {
