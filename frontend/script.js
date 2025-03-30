@@ -54,6 +54,10 @@ async function getClients() {
         const response = await fetch(`${apiUrl}/clients/`);
         const clients = await response.json();
         const clientList = document.getElementById('clients-list');
+        if (!clientList) {
+            console.error('Элемент с id "clients-list" не найден.');
+            return;
+        }
         const clientSelect = document.getElementById('order-client');
         clientList.innerHTML = '';
         clientSelect.innerHTML = '';  // Очищаем старые данные
