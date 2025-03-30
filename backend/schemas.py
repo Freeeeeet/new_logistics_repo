@@ -19,8 +19,8 @@ class OrderCreateNorm(BaseModel):
     client_email: str
     client_phone: str
     cargo_description: str
-    cargo_weight: str
-    cargo_volume: str
+    cargo_weight: int
+    cargo_volume: int
     route_id: int
     warehouse_id: int
 
