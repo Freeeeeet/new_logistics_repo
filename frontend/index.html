@@ -30,17 +30,16 @@
     <h2>Управление заказами</h2>
     <form id="order-form">
     <label for="order-client">Клиент:</label>
-    <select id="order-client" onchange="checkAndAddOption('order-client')"></select>
-    <input type="text" id="client-input" placeholder="Новый клиент" oninput="addNewOption('order-client', 'client-input')">
+    <input type="text" id="order-client" placeholder="Новый клиент" oninput="addNewOption('order-client', 'order-client')">
 
+    <label for="cargo-input">Груз:</label>
     <input type="text" id="cargo-input" placeholder="Новый груз" oninput="addNewOption('order-cargo', 'cargo-input')">
 
     <label for="order-route">Маршрут:</label>
-    <select id="order-route" onchange="checkAndAddOption('order-route')"></select>
-    <input type="text" id="route-input" placeholder="Новый маршрут" oninput="addNewOption('order-route', 'route-input')">
+    <select id="order-route"></select>
 
     <label for="order-warehouse">Склад текущий:</label>
-    <select id="order-warehouse" onchange="checkAndAddOption('order-warehouse')"></select>
+    <select id="order-warehouse"></select>
 
     <button type="submit">Создать заказ</button>
 </form>

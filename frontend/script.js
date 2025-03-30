@@ -370,9 +370,16 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     event.preventDefault();
     console.log("Отправка формы заказа...");
 
+    const clientValue = document.getElementById('order-client').value.trim();
+    const cargoValue = document.getElementById('cargo-input').value.trim();
+
+    // Получаем ID клиента и груза из введённых значений или из выбранных опций
+    const client_id = clientValue ? clientValue : document.getElementById('order-client').value;
+    const cargo_id = cargoValue ? cargoValue : document.getElementById('order-cargo').value;
+
     const newOrder = {
-        client_id: document.getElementById('order-client').value,
-        cargo_id: document.getElementById('order-cargo').value,
+        client_id: client_id,
+        cargo_id: cargo_id,
         route_id: document.getElementById('order-route').value,
         warehouse_id: document.getElementById('order-warehouse').value || null,
         status_id: document.getElementById('order-status').value
@@ -430,6 +437,7 @@ function checkAndAddOption(selectId) {
     }
 }
 
+// Функция для добавления нового клиента или груза в выпадающий список
 function addNewOption(selectId, inputId) {
     const inputValue = document.getElementById(inputId).value.trim();
     const selectElement = document.getElementById(selectId);
