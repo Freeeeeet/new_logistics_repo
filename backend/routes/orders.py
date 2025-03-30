@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from schemas import Order, OrderCreate, OrderUpdate, OrderCreateNorm
+from schemas import Order, OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails
 
 from crud.orders_crud import get_all_orders, get_order_by_id, create_order, update_order, delete_order, create_order_full
 from typing import List
@@ -9,7 +9,7 @@ from typing import List
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Order])
+@router.get("/", response_model=List[OrderWithDetails])
 async def read_orders(db: AsyncSession = Depends(get_db)):
     return await get_all_orders(db)
 

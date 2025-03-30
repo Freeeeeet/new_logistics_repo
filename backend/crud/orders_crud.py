@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import Order, Client, Cargo, Route, OrderStatus
+from models import Order, Client, Cargo, Route, OrderStatus, Payment, Warehouse
 from schemas import OrderCreate, OrderUpdate, OrderCreateNorm
 from fastapi import HTTPException
 
@@ -8,8 +8,33 @@ from datetime import datetime
 
 
 async def get_all_orders(db: AsyncSession):
-    result = await db.execute(select(Order))
-    return result.scalars().all()
+    result = await db.execute(
+        select(
+            Order.id.label("order_id"),
+            Payment.id.label("is_paid"),
+            Client.name.label("client_name"),
+            Client.email.label("client_email"),
+            OrderStatus.name.label("order_status"),
+            Route.origin.label("origin"),
+            Route.destination.label("destination"),
+            Warehouse.name.label("warehouse_name"),
+            Warehouse.location.label("warehouse_location"),
+            Cargo.description.label("cargo_description"),
+            Cargo.weight.label("cargo_weight"),
+            Cargo.volume.label("cargo_volume"),
+        )
+        .select_from(Order)
+        .outerjoin(Payment, Payment.order_id == Order.id)
+        .join(Client, Order.client_id == Client.id)
+        .join(OrderStatus, Order.status_id == OrderStatus.id)
+        .join(Route, Order.route_id == Route.id)
+        .join(Warehouse, Order.warehouse_id == Warehouse.id)
+        .join(Cargo, Order.cargo_id == Cargo.id)
+        .order_by(Order.id.desc())
+    )
+    # Скалярный результат преобразуем в список словарей
+    orders = result.fetchall()
+    return [dict(order) for order in orders]
 
 
 async def get_order_by_id(db: AsyncSession, order_id: int):
