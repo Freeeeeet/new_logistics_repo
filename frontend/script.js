@@ -273,12 +273,14 @@ async function getOrders() {
         orderList.innerHTML = '';
 
         orders.forEach(order => {
-            const li = document.createElement('li');
-            li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo}, Клиент: ${order.client.name}, Маршрут: ${order.route.origin} - ${order.route.destination}, Склад: ${order.warehouse.name}
-                <button onclick="editOrder(${order.id})">✏️</button>
-                <button onclick="deleteOrder(${order.id})">🗑️</button>`;
-            orderList.appendChild(li);
-        });
+    if (order.client && order.client.name) {
+        const li = document.createElement('li');
+        li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo}, Клиент: ${order.client.name}, Маршрут: ${order.route.origin} - ${order.route.destination}, Склад: ${order.warehouse.name}
+            <button onclick="editOrder(${order.id})">✏️</button>
+            <button onclick="deleteOrder(${order.id})">🗑️</button>`;
+        orderList.appendChild(li);
+    }
+});
     } catch (error) {
         console.error('Ошибка:', error);
     }
