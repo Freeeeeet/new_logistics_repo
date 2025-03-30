@@ -291,21 +291,10 @@ async function getOrders() {
         orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
 
         for (let order of orders) {
-            // Получаем информацию о клиенте, маршруте и складе
-            const [clientResponse, routeResponse, warehouseResponse] = await Promise.all([
-                fetch(`${apiUrl}/clients/${order.client_id}`),
-                fetch(`${apiUrl}/routes/${order.route_id}`),
-                fetch(`${apiUrl}/warehouses/${order.warehouse_id}`)
-            ]);
-
-            const client = await clientResponse.json();
-            const route = await routeResponse.json();
-            const warehouse = await warehouseResponse.json();
-
             const li = document.createElement('li');
-            li.innerHTML = `Заказ: ${order.id}, Клиент: ${client.name}, Маршрут: ${route.origin} - ${route.destination}, Склад: ${warehouse.name}, Статус: ${order.status_id}
-                <button onclick="editOrder(${order.id})">✏️</button>
-                <button onclick="deleteOrder(${order.id})">🗑️</button>`;
+            li.innerHTML = `Заказ: ${order.order_id}, Клиент: ${order.client_name}, Маршрут: ${order.origin} - ${order.destination}, Склад: ${order.warehouse_name}, Статус: ${order.order_status}
+                <button onclick="editOrder(${order.order_id})">✏️</button>
+                <button onclick="deleteOrder(${order.order_id})">🗑️</button>`;
             orderList.appendChild(li);
         }
     } catch (error) {
