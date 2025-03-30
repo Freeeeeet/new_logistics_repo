@@ -197,9 +197,9 @@ async function editRoute(routeId) {
 
         console.log(`Выбрали маршрут ID ${routeId} для редактирования`);
 
-        document.getElementById('route-name').value = route.name;
         document.getElementById('route-origin').value = route.origin;
         document.getElementById('route-destination').value = route.destination;
+        document.getElementById('route-distance').value = route.distance;
 
         // Меняем кнопку на "Обновить"
         const submitButton = document.querySelector('#route-form button');
