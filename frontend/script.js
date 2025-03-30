@@ -288,19 +288,29 @@ async function getOrders() {
         const response = await fetch(`${apiUrl}/orders/`);
         const orders = await response.json();
         const orderList = document.getElementById('orders-list');
-        orderList.innerHTML = '';
+        orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
 
-        orders.forEach(order => {
-            if (order.client && order.client.name) {
-                const li = document.createElement('li');
-                li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo_id}, Клиент: ${order.client_id}, Маршрут: ${order.route_id}, Склад: ${order.warehouse_id}
-                    <button onclick="editOrder(${order.id})">✏️</button>
-                    <button onclick="deleteOrder(${order.id})">🗑️</button>`;
-                orderList.appendChild(li);
-            }
-        });
+        for (let order of orders) {
+            // Получаем информацию о клиенте, маршруте и складе
+            const [clientResponse, routeResponse, warehouseResponse] = await Promise.all([
+                fetch(`${apiUrl}/clients/${order.client_id}`),
+                fetch(`${apiUrl}/routes/${order.route_id}`),
+                fetch(`${apiUrl}/warehouses/${order.warehouse_id}`)
+            ]);
+
+            const client = await clientResponse.json();
+            const route = await routeResponse.json();
+            const warehouse = await warehouseResponse.json();
+
+            // Отображаем заказ, если получена информация о всех связанных данных
+            const li = document.createElement('li');
+            li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo_id}, Клиент: ${client.name}, Маршрут: ${route.origin} - ${route.destination}, Склад: ${warehouse.name}
+                <button onclick="editOrder(${order.id})">✏️</button>
+                <button onclick="deleteOrder(${order.id})">🗑️</button>`;
+            orderList.appendChild(li);
+        }
     } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('Ошибка при получении заказов:', error);
     }
 }
 
