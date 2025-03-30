@@ -60,8 +60,8 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
         # 2. Создаем новый груз
         cargo = Cargo(
             description=order.cargo_description,
-            weight=int(order.cargo_weight),
-            volume=int(order.cargo_volume)
+            weight=order.cargo_weight,
+            volume=order.cargo_volume
         )
         db.add(cargo)
 
@@ -71,10 +71,10 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
 
         # 4. Создаем новый заказ
         order_data = Order(
-            client_id=int(client.id),
-            cargo_id=int(cargo.id),
-            route_id=int(order.route_id),
-            warehouse_id=int(order.warehouse_id),
+            client_id=client.id,
+            cargo_id=cargo.id,
+            route_id=order.route_id,
+            warehouse_id=order.warehouse_id,
             status_id=status,
             created_at=datetime.now()
         )
