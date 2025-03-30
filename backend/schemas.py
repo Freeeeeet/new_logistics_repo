@@ -1,7 +1,7 @@
 from pydantic import BaseModel, condecimal, field_validator, EmailStr
 from datetime import datetime
 from typing import Optional, Union
-
+from decimal import Decimal
 
 class OrderBase(BaseModel):
     client_id: int
@@ -145,25 +145,28 @@ class Cargo(CargoBase):
         from_attributes = True
 
 
-# --- Маршруты ---
+# Модели маршрута
 class RouteBase(BaseModel):
     origin: str
     destination: str
     distance: condecimal(max_digits=10, decimal_places=2)
 
 
+# Модель для создания маршрута
 class RouteCreate(BaseModel):
-    start_location: str
-    end_location: str
+    origin: str
+    destination: str
     distance: float
 
-class Route(RouteBase):
+# Модель маршрута для возвращаемого ответа
+class Route(BaseModel):
     id: int
-    start_location: str
-    end_location: str
+    origin: str
+    destination: str
+    distance: Decimal
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # --- Заказы ---
