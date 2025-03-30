@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
 from schemas import ClientCreate, Client, ClientUpdate
-from crud.clients_crud import create_client, get_client, update_client, delete_client
+from crud.clients_crud import create_client, get_clients, get_client, update_client, delete_client
 
 router = APIRouter()
 
