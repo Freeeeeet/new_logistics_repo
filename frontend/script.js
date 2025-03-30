@@ -144,11 +144,11 @@ document.getElementById('route-form').addEventListener('submit', async (event) =
     event.preventDefault();
     console.log("Отправка формы маршрута...");
 
-    const routeName = document.getElementById('route-name').value;
     const routeOrigin = document.getElementById('route-origin').value;
     const routeDestination = document.getElementById('route-destination').value;
+    const routeDistance = document.getElementById('route-distance').value;
 
-    const newRoute = { name: routeName, origin: routeOrigin, destination: routeDestination };
+    const newRoute = { origin: routeOrigin, destination: routeDestination, distance: routeDistance, };
 
     try {
         const response = await fetch(`${apiUrl}/routes/`, {
@@ -217,9 +217,9 @@ async function editRoute(routeId) {
 // Обновление маршрута
 async function updateRoute(routeId) {
     const updatedRoute = {
-        name: document.getElementById('route-name').value,
         origin: document.getElementById('route-origin').value,
-        destination: document.getElementById('route-destination').value
+        destination: document.getElementById('route-destination').value,
+        distance: document.getElementById('route-distance').value
     };
 
     try {
