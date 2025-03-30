@@ -71,7 +71,7 @@ async function getClients() {
 
         const clientSelect = document.getElementById('order-client');
         clientList.innerHTML = ''; // Очищаем список
-        clientSelect.innerHTML = '';  // Очищаем старые данные
+//        clientSelect.innerHTML = '';  // Очищаем старые данные
 
         clients.forEach(client => {
             // Отображаем в списке клиентов
