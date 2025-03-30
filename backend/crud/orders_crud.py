@@ -132,12 +132,16 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
 
 async def update_order_full(db: AsyncSession, order_id: int, updated_order: OrderUpdate) -> OrderWithDetails:
     async with db.begin():  # Начинаем транзакцию
-        # Находим заказ
-        db_order = await db.get(Order, order_id)
+        # Загружаем заказ вместе с платежами
+        result = await db.execute(
+            select(Order).options(selectinload(Order.payments)).where(Order.id == order_id)
+        )
+        db_order = result.scalar_one_or_none()
+
         if not db_order:
             raise HTTPException(status_code=404, detail="Заказ не найден")
 
-        # Обновляем данные клиента, если есть изменения
+        # Обновляем клиента
         db_client = await db.get(Client, db_order.client_id)
         if db_client and any([updated_order.client_name, updated_order.client_email, updated_order.client_phone]):
             if updated_order.client_name:
@@ -147,7 +151,7 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
             if updated_order.client_phone:
                 db_client.phone = updated_order.client_phone
 
-        # Обновляем данные груза, если есть изменения
+        # Обновляем груз
         db_cargo = await db.get(Cargo, db_order.cargo_id)
         if db_cargo and any([updated_order.cargo_description, updated_order.cargo_weight, updated_order.cargo_volume]):
             if updated_order.cargo_description:
@@ -157,7 +161,7 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
             if updated_order.cargo_volume:
                 db_cargo.volume = updated_order.cargo_volume
 
-        # Обновляем сам заказ, если изменился маршрут или склад
+        # Обновляем маршрут и склад
         if any([updated_order.route_id, updated_order.warehouse_id]):
             if updated_order.route_id:
                 db_order.route_id = updated_order.route_id
@@ -167,8 +171,8 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
     await db.commit()
     await db.refresh(db_order)
 
-    # Проверяем, был ли заказ оплачен
-    is_paid = 1 if db_order.payments else 0
+    # Проверяем оплату
+    is_paid = 1 if db_order.payments else 0  # payments уже загружены, ошибки не будет
 
     return OrderWithDetails(
         order_id=db_order.id,
@@ -184,6 +188,9 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
         cargo_weight=db_cargo.weight if db_cargo else None,
         cargo_volume=db_cargo.volume if db_cargo else None,
     )
+
+
+
 async def update_order(db: AsyncSession, order_id: int, order_update: OrderUpdate):
     result = await db.execute(select(Order).filter(Order.id == order_id))
     db_order = result.scalars().first()
