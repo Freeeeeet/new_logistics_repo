@@ -33,7 +33,6 @@
     <select id="order-client" onchange="checkAndAddOption('order-client')"></select>
     <input type="text" id="client-input" placeholder="Введите новый клиент" oninput="addNewOption('order-client', 'client-input')">
 
-    <label for="order-cargo">Груз:</label>
     <select id="order-cargo" onchange="checkAndAddOption('order-cargo')"></select>
     <input type="text" id="cargo-input" placeholder="Введите новый груз" oninput="addNewOption('order-cargo', 'cargo-input')">
 
@@ -41,13 +40,9 @@
     <select id="order-route" onchange="checkAndAddOption('order-route')"></select>
     <input type="text" id="route-input" placeholder="Введите новый маршрут" oninput="addNewOption('order-route', 'route-input')">
 
-    <label for="order-warehouse">Склад:</label>
+    <label for="order-warehouse">Склад текущий:</label>
     <select id="order-warehouse" onchange="checkAndAddOption('order-warehouse')"></select>
     <input type="text" id="warehouse-input" placeholder="Введите новый склад" oninput="addNewOption('order-warehouse', 'warehouse-input')">
-
-    <label for="order-status">Статус:</label>
-    <select id="order-status" onchange="checkAndAddOption('order-status')"></select>
-    <input type="text" id="status-input" placeholder="Введите новый статус" oninput="addNewOption('order-status', 'status-input')">
 
     <button type="submit">Создать заказ</button>
 </form>
