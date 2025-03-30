@@ -31,18 +31,16 @@
     <form id="order-form">
     <label for="order-client">Клиент:</label>
     <select id="order-client" onchange="checkAndAddOption('order-client')"></select>
-    <input type="text" id="client-input" placeholder="Введите новый клиент" oninput="addNewOption('order-client', 'client-input')">
+    <input type="text" id="client-input" placeholder="Новый клиент" oninput="addNewOption('order-client', 'client-input')">
 
-    <select id="order-cargo" onchange="checkAndAddOption('order-cargo')"></select>
-    <input type="text" id="cargo-input" placeholder="Введите новый груз" oninput="addNewOption('order-cargo', 'cargo-input')">
+    <input type="text" id="cargo-input" placeholder="Новый груз" oninput="addNewOption('order-cargo', 'cargo-input')">
 
     <label for="order-route">Маршрут:</label>
     <select id="order-route" onchange="checkAndAddOption('order-route')"></select>
-    <input type="text" id="route-input" placeholder="Введите новый маршрут" oninput="addNewOption('order-route', 'route-input')">
+    <input type="text" id="route-input" placeholder="Новый маршрут" oninput="addNewOption('order-route', 'route-input')">
 
     <label for="order-warehouse">Склад текущий:</label>
     <select id="order-warehouse" onchange="checkAndAddOption('order-warehouse')"></select>
-    <input type="text" id="warehouse-input" placeholder="Введите новый склад" oninput="addNewOption('order-warehouse', 'warehouse-input')">
 
     <button type="submit">Создать заказ</button>
 </form>
