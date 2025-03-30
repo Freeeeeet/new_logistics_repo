@@ -1,8 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import Order, Client, Cargo, Route, OrderStatus
-from schemas import OrderCreate, OrderUpdate, OrderCreateFull
+from schemas import OrderCreate, OrderUpdate, OrderCreateNorm
 from fastapi import HTTPException
+
+from datetime import datetime
 
 
 async def get_all_orders(db: AsyncSession):
@@ -15,7 +17,7 @@ async def get_order_by_id(db: AsyncSession, order_id: int):
     return result.scalars().first()
 
 
-async def create_order(db: AsyncSession, order_data: OrderCreateFull):
+async def create_order(db: AsyncSession, order_data: OrderCreate):
     # Создание нового клиента, если клиент передан как словарь
     client = await db.get(Client, order_data.client_id) if isinstance(order_data.client_id, int) else None
     if client is None:
@@ -43,6 +45,45 @@ async def create_order(db: AsyncSession, order_data: OrderCreateFull):
     await db.commit()
     await db.refresh(new_order)
     return new_order
+
+
+async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
+    async with db.begin():  # Начинаем транзакцию
+        # 1. Создаем нового клиента
+        client = Client(
+            name=order.client_name,
+            email=order.client_email,
+            phone=order.client_phone
+        )
+        db.add(client)
+
+        # 2. Создаем новый груз
+        cargo = Cargo(
+            description=order.cargo_description,
+            weight=order.cargo_weight,
+            volume=order.cargo_volume
+        )
+        db.add(cargo)
+
+        # 3. Получаем статус заказа (например, 'В процессе')
+
+        status = 1
+
+        # 4. Создаем новый заказ
+        order_data = Order(
+            client_id=client.id,
+            cargo_id=cargo.id,
+            route_id=order.route_id,
+            warehouse_id=order.warehouse_id,
+            status_id=status,
+            created_at=datetime.now()
+        )
+        db.add(order_data)
+
+    await db.commit()
+
+    return order_data
+
 
 async def update_order(db: AsyncSession, order_id: int, order_update: OrderUpdate):
     result = await db.execute(select(Order).filter(Order.id == order_id))

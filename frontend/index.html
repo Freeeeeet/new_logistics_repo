@@ -29,23 +29,30 @@
     <div id="orders-tab" class="tab-content">
     <h2>Управление заказами</h2>
     <form id="order-form">
-            <label for="order-client">Клиент:</label>
-            <select id="order-client" required></select>
+        <label for="order-client">Клиент:</label>
+        <select id="order-client" required>
+            <!-- Сюда будут добавляться клиенты из API -->
+        </select>
+        <button type="button" onclick="showCreateClientForm()">Добавить нового клиента</button>
 
-            <label for="cargo-input">Груз:</label>
-            <input type="text" id="cargo-input" placeholder="Описание груза" required>
-            <input type="number" id="cargo-weight" placeholder="Вес груза" required>
-            <input type="number" id="cargo-volume" placeholder="Объем груза" required>
+        <label for="cargo-input">Груз:</label>
+        <input type="text" id="cargo-input" placeholder="Описание груза" required>
+        <input type="number" id="cargo-weight" placeholder="Вес груза" required>
+        <input type="number" id="cargo-volume" placeholder="Объем груза" required>
 
-            <label for="order-route">Маршрут:</label>
-            <select id="order-route" required></select>
+        <label for="order-route">Маршрут:</label>
+        <select id="order-route" required>
+            <!-- Сюда будут добавляться маршруты из API -->
+        </select>
+        <button type="button" onclick="showCreateRouteForm()">Добавить новый маршрут</button>
 
-            <label for="order-warehouse">Склад текущий:</label>
-            <select id="order-warehouse" required></select>
+        <label for="order-warehouse">Склад:</label>
+        <select id="order-warehouse" required>
+            <!-- Сюда будут добавляться склады из API -->
+        </select>
 
-            <button type="submit">Создать заказ</button>
-        </form>
-
+        <button type="submit">Создать заказ</button>
+    </form>
     <ul id="orders-list"></ul>
 </div>
 

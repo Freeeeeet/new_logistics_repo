@@ -14,6 +14,18 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     pass
 
+class OrderCreateNorm(BaseModel):
+    client_name: str
+    client_email: str
+    client_phone: str
+    cargo_description: str
+    cargo_weight: str
+    cargo_volume: str
+    route_id: int
+    warehouse_id: int
+
+    class Config:
+        from_attributes = True
 
 class OrderUpdate(OrderBase):
     pass
