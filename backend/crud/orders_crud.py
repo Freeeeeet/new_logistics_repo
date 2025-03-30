@@ -174,13 +174,14 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
 
     # Проверяем оплату
     is_paid = 1 if db_order.payments else 0  # payments уже загружены, ошибки не будет
+    db_status = await db.get(OrderStatus, db_order.status_id)
 
     return OrderWithDetails(
         order_id=db_order.id,
         is_paid=is_paid,
         client_name=db_client.name if db_client else None,
         client_email=db_client.email if db_client else None,
-        order_status=db_order.status.name,
+        order_status=db_status.name if db_status else None,
         origin=db_order.route.origin,
         destination=db_order.route.destination,
         warehouse_name=db_order.warehouse.name if db_order.warehouse else None,
