@@ -157,8 +157,10 @@ class RouteCreate(BaseModel):
     end_location: str
     distance: float
 
-class Route(RouteCreate):
+class Route(RouteBase):
     id: int
+    start_location: str
+    end_location: str
 
     class Config:
         from_attributes = True
