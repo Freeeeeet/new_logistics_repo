@@ -29,25 +29,23 @@
     <div id="orders-tab" class="tab-content">
     <h2>Управление заказами</h2>
     <form id="order-form">
-        <select id="order-client" required>
-            <option value="" disabled selected>Выберите клиента</option>
-            <!-- Список клиентов будет заполняться через JavaScript -->
-        </select>
+    <label for="order-client">Клиент:</label>
+    <select id="order-client"></select>
 
-        <input type="text" id="order-cargo" placeholder="Груз (описание)" required>
+    <label for="order-cargo">Груз:</label>
+    <select id="order-cargo"></select>
 
-        <select id="order-route" required>
-            <option value="" disabled selected>Выберите маршрут</option>
-            <!-- Список маршрутов будет заполняться через JavaScript -->
-        </select>
+    <label for="order-route">Маршрут:</label>
+    <select id="order-route"></select>
 
-        <select id="order-warehouse" required>
-            <option value="" disabled selected>Выберите склад</option>
-            <!-- Список складов будет заполняться через JavaScript -->
-        </select>
+    <label for="order-warehouse">Склад:</label>
+    <select id="order-warehouse"></select>
 
-        <button type="submit">Создать заказ</button>
-    </form>
+    <label for="order-status">Статус:</label>
+    <select id="order-status"></select>
+
+    <button type="submit">Создать заказ</button>
+</form>
 
     <ul id="orders-list"></ul>
 </div>

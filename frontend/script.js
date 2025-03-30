@@ -302,15 +302,66 @@ async function getOrders() {
             const route = await routeResponse.json();
             const warehouse = await warehouseResponse.json();
 
-            // Отображаем заказ, если получена информация о всех связанных данных
             const li = document.createElement('li');
-            li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo_id}, Клиент: ${client.name}, Маршрут: ${route.origin} - ${route.destination}, Склад: ${warehouse.name}
+            li.innerHTML = `Заказ: ${order.id}, Клиент: ${client.name}, Маршрут: ${route.origin} - ${route.destination}, Склад: ${warehouse.name}, Статус: ${order.status_id}
                 <button onclick="editOrder(${order.id})">✏️</button>
                 <button onclick="deleteOrder(${order.id})">🗑️</button>`;
             orderList.appendChild(li);
         }
     } catch (error) {
-        console.error('Ошибка при получении заказов:', error);
+        console.error('Ошибка:', error);
+    }
+}
+
+async function editOrder(orderId) {
+    try {
+        const response = await fetch(`${apiUrl}/orders/${orderId}`);
+        const order = await response.json();
+
+        // Заполнение формы данными заказа
+        document.getElementById('order-client').value = order.client_id;
+        document.getElementById('order-cargo').value = order.cargo_id;
+        document.getElementById('order-route').value = order.route_id;
+        document.getElementById('order-warehouse').value = order.warehouse_id || '';
+        document.getElementById('order-status').value = order.status_id;
+
+        const submitButton = document.querySelector('#order-form button');
+        submitButton.textContent = "Обновить заказ";
+        submitButton.onclick = async (event) => {
+            event.preventDefault();
+            await updateOrder(orderId);
+        };
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+async function updateOrder(orderId) {
+    const updatedOrder = {
+        client_id: document.getElementById('order-client').value,
+        cargo_id: document.getElementById('order-cargo').value,
+        route_id: document.getElementById('order-route').value,
+        warehouse_id: document.getElementById('order-warehouse').value || null,
+        status_id: document.getElementById('order-status').value
+    };
+
+    try {
+        const response = await fetch(`${apiUrl}/orders/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedOrder)
+        });
+
+        if (response.ok) {
+            alert('Заказ обновлён!');
+            getOrders();
+            document.getElementById('order-form').reset();
+            document.querySelector('#order-form button').textContent = "Создать заказ";
+        } else {
+            alert('Ошибка при обновлении заказа');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
     }
 }
 
@@ -319,15 +370,16 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     event.preventDefault();
     console.log("Отправка формы заказа...");
 
-    const clientId = document.getElementById('order-client').value;
-    const cargo = document.getElementById('order-cargo').value;
-    const routeId = document.getElementById('order-route').value;
-    const warehouseId = document.getElementById('order-warehouse').value;
-
-    const newOrder = { client_id: clientId, cargo: cargo, route_id: routeId, warehouse_id: warehouseId };
+    const newOrder = {
+        client_id: document.getElementById('order-client').value,
+        cargo_id: document.getElementById('order-cargo').value,
+        route_id: document.getElementById('order-route').value,
+        warehouse_id: document.getElementById('order-warehouse').value || null,
+        status_id: document.getElementById('order-status').value
+    };
 
     try {
-        const response = await fetch(`${apiUrl}/orders/create`, {
+        const response = await fetch(`${apiUrl}/orders/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newOrder)
@@ -344,6 +396,25 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         console.error('Ошибка:', error);
     }
 });
+
+// Удаление заказа
+async function deleteOrder(orderId) {
+    if (!confirm("Удалить заказ?")) return;
+
+    try {
+        const response = await fetch(`${apiUrl}/orders/${orderId}`, { method: 'DELETE' });
+
+        if (response.ok) {
+            alert('Заказ удалён!');
+            getOrders();
+        } else {
+            alert('Ошибка при удалении заказа');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
 
 // ===================== СКЛАДЫ =====================
 
