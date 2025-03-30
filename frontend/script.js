@@ -293,7 +293,7 @@ async function getOrders() {
         orders.forEach(order => {
             if (order.client && order.client.name) {
                 const li = document.createElement('li');
-                li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo}, Клиент: ${order.client.name}, Маршрут: ${order.route.origin} - ${order.route.destination}, Склад: ${order.warehouse.name}
+                li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo}, Клиент: ${order.client.id}, Маршрут: ${order.route.id}, Склад: ${order.warehouse.id}
                     <button onclick="editOrder(${order.id})">✏️</button>
                     <button onclick="deleteOrder(${order.id})">🗑️</button>`;
                 orderList.appendChild(li);
