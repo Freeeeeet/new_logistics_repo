@@ -40,13 +40,13 @@ class OrderUpdate(BaseModel):
 
 class OrderWithDetails(BaseModel):
     order_id: int
-    is_paid: Optional[int]  # Можно использовать `Optional`, так как платеж может быть отсутствующим
+    is_paid: Optional[int]
     client_name: str
     client_email: str
     order_status: str
     origin: str
     destination: str
-    warehouse_name: Optional[str]  # Может быть None, если склад не указан
+    warehouse_name: Optional[str]
     warehouse_location: Optional[str]
     cargo_description: Optional[str]
     cargo_weight: Optional[Decimal]

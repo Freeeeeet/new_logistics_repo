@@ -151,13 +151,16 @@ async def update_order_full(db: AsyncSession, order_id: int, updated_order: Orde
     await db.commit()
     await db.refresh(db_order)
 
+    # Проверяем, был ли заказ оплачен (есть ли связанные платежи)
+    is_paid = 1 if db_order.payments else 0  # 1 — оплачен, 0 — не оплачен
+
     # Возвращаем обновленный заказ с деталями
     return OrderWithDetails(
         order_id=db_order.id,
-        is_paid=db_order.is_paid,
+        is_paid=is_paid,  # Применяем проверку
         client_name=db_order.client_name,
         client_email=db_order.client_email,
-        order_status=db_order.order_status.name,  # Предполагается, что есть связь с моделью OrderStatus
+        order_status=db_order.status.name,  # Предполагается, что есть связь с моделью OrderStatus
         origin=db_order.route.origin,
         destination=db_order.route.destination,
         warehouse_name=db_order.warehouse.name if db_order.warehouse else None,
