@@ -1,59 +1,45 @@
-const apiUrl = 'https://ts.jijathecat.space/logistics/api';
+const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Бэкенд на сервере
+
+// Ждем загрузки DOM перед выполнением
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM загружен!");
+    getClients();
+    showTab('clients');
+});
 
 // Переключение вкладок
 function showTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.style.display = 'none';
-    });
+    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
     document.getElementById(tabId).style.display = 'block';
 }
 
-// Создание или редактирование клиента
+// Создание клиента
 document.getElementById('client-form').addEventListener('submit', async (event) => {
     event.preventDefault();
+    console.log("Отправка формы...");
 
-    const clientId = document.getElementById('client-id').value.trim(); // Получаем ID клиента
-    const clientName = document.getElementById('client-name').value.trim();
-    const clientEmail = document.getElementById('client-email').value.trim();
-    const clientPhone = document.getElementById('client-phone').value.trim();
+    const clientName = document.getElementById('client-name').value;
+    const clientEmail = document.getElementById('client-email').value;
+    const clientPhone = document.getElementById('client-phone').value;
 
-    if (!clientName || !clientEmail || !clientPhone) {
-        alert('Заполните все поля');
-        return;
-    }
-
-    const clientData = { name: clientName, email: clientEmail, phone: clientPhone };
+    const newClient = { name: clientName, email: clientEmail, phone: clientPhone };
 
     try {
-        let response;
-        if (clientId) {
-            console.log(`Редактируем клиента ID ${clientId}`, clientData);
-            response = await fetch(`${apiUrl}/clients/${clientId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(clientData)
-            });
-        } else {
-            console.log('Создаём нового клиента', clientData);
-            response = await fetch(`${apiUrl}/clients/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(clientData)
-            });
-        }
+        const response = await fetch(`${apiUrl}/clients/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newClient)
+        });
 
         if (response.ok) {
-            alert(clientId ? 'Клиент обновлён!' : 'Клиент создан!');
-            document.getElementById('client-form').reset();
-            document.getElementById('client-id').value = ''; // Сбрасываем ID после редактирования
+            alert('Клиент создан!');
             getClients();
+            document.getElementById('client-form').reset(); // Очищаем форму
         } else {
-            const errorMessage = await response.text();
-            alert(`Ошибка: ${errorMessage}`);
+            alert('Ошибка при создании клиента');
         }
     } catch (error) {
-        console.error('Ошибка при отправке запроса:', error);
-        alert('Ошибка сети. Проверьте консоль.');
+        console.error('Ошибка:', error);
     }
 });
 
@@ -68,47 +54,84 @@ async function getClients() {
         clients.forEach(client => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <span>Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}</span>
-                <button onclick="editClient(${client.id}, '${client.name}', '${client.email}', '${client.phone}')">✏ Редактировать</button>
-                <button onclick="deleteClient(${client.id})">🗑 Удалить</button>
+                Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}
+                <button onclick="editClient(${client.id})">✏️</button>
+                <button onclick="deleteClient(${client.id})">🗑️</button>
             `;
             clientList.appendChild(li);
         });
-
-        console.log('Клиенты загружены:', clients);
     } catch (error) {
-        console.error('Ошибка загрузки клиентов:', error);
+        console.error('Ошибка:', error);
     }
 }
 
-// Заполняем форму для редактирования
-function editClient(id, name, email, phone) {
-    console.log(`Выбрали клиента ID ${id} для редактирования`);
-    document.getElementById('client-id').value = id;
-    document.getElementById('client-name').value = name;
-    document.getElementById('client-email').value = email;
-    document.getElementById('client-phone').value = phone;
+// Редактирование клиента
+async function editClient(clientId) {
+    try {
+        const response = await fetch(`${apiUrl}/clients/${clientId}`);
+        const client = await response.json();
+
+        console.log(`Выбрали клиента ID ${clientId} для редактирования`);
+
+        document.getElementById('client-name').value = client.name;
+        document.getElementById('client-email').value = client.email;
+        document.getElementById('client-phone').value = client.phone;
+
+        // Меняем кнопку на "Обновить"
+        const submitButton = document.querySelector('#client-form button');
+        submitButton.textContent = "Обновить клиента";
+        submitButton.onclick = async (event) => {
+            event.preventDefault();
+            await updateClient(clientId);
+        };
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+// Обновление клиента
+async function updateClient(clientId) {
+    const updatedClient = {
+        name: document.getElementById('client-name').value,
+        email: document.getElementById('client-email').value,
+        phone: document.getElementById('client-phone').value
+    };
+
+    try {
+        const response = await fetch(`${apiUrl}/clients/${clientId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedClient)
+        });
+
+        if (response.ok) {
+            alert('Клиент обновлён!');
+            getClients();
+            document.getElementById('client-form').reset();
+            document.querySelector('#client-form button').textContent = "Создать клиента";
+        } else {
+            alert('Ошибка при обновлении клиента');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
 }
 
 // Удаление клиента
 async function deleteClient(clientId) {
-    if (!confirm('Удалить клиента?')) return;
+    if (!confirm("Удалить клиента?")) return;
 
     try {
         const response = await fetch(`${apiUrl}/clients/${clientId}`, { method: 'DELETE' });
 
         if (response.ok) {
-            alert('Клиент удалён');
+            alert('Клиент удалён!');
             getClients();
         } else {
-            const errorMessage = await response.text();
-            alert(`Ошибка удаления: ${errorMessage}`);
+            alert('Ошибка при удалении клиента');
         }
     } catch (error) {
-        console.error('Ошибка при удалении клиента:', error);
+        console.error('Ошибка:', error);
     }
 }
-
-// Загружаем клиентов при запуске
-getClients();
-showTab('clients');
