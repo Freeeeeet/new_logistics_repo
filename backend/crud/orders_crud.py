@@ -34,7 +34,25 @@ async def get_all_orders(db: AsyncSession):
     )
     # Скалярный результат преобразуем в список словарей
     orders = result.fetchall()
-    return [dict(order) for order in orders]
+
+    # Преобразуем результат в нужный формат
+    return [
+        {
+            "order_id": order.order_id,
+            "is_paid": order.is_paid,
+            "client_name": order.client_name,
+            "client_email": order.client_email,
+            "order_status": order.order_status,
+            "origin": order.origin,
+            "destination": order.destination,
+            "warehouse_name": order.warehouse_name,
+            "warehouse_location": order.warehouse_location,
+            "cargo_description": order.cargo_description,
+            "cargo_weight": order.cargo_weight,
+            "cargo_volume": order.cargo_volume,
+        }
+        for order in orders
+    ]
 
 
 async def get_order_by_id(db: AsyncSession, order_id: int):
