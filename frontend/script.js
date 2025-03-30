@@ -338,7 +338,7 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     };
 
     try {
-        const response = await fetch(`${apiUrl}/orders/`, {
+        const response = await fetch(`${apiUrl}/orders/create-full`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newOrder)
