@@ -3,20 +3,17 @@ const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Бэкенд н�
 // Ждем загрузки DOM перед выполнением
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM загружен!");
-    showTab('clients');  // Начинаем с вкладки "Клиенты"
+    getClients();
+    getRoutes();
+    getWarehouses();  // Получаем список складов
+    getOrders();  // Получаем список заказов
+    showTab('clients');
 });
 
 // Переключение вкладок
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
     document.getElementById(tabId).style.display = 'block';
-
-    // Вызов функций для получения данных, если это соответствующие вкладки
-    if (tabId === 'clients-tab') {
-        getClients();  // Загружаем список клиентов
-    } else if (tabId === 'routes-tab') {
-        getRoutes();  // Загружаем список маршрутов
-    }
 }
 
 // ===================== КЛИЕНТЫ =====================
@@ -57,14 +54,23 @@ async function getClients() {
         const response = await fetch(`${apiUrl}/clients/`);
         const clients = await response.json();
         const clientList = document.getElementById('clients-list');
+        const clientSelect = document.getElementById('order-client');
         clientList.innerHTML = '';
+        clientSelect.innerHTML = '';  // Очищаем старые данные
 
         clients.forEach(client => {
+            // Отображаем в списке клиентов
             const li = document.createElement('li');
             li.innerHTML = `Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}
                 <button onclick="editClient(${client.id})">✏️</button>
                 <button onclick="deleteClient(${client.id})">🗑️</button>`;
             clientList.appendChild(li);
+
+            // Добавляем клиентов в выпадающий список для заказов
+            const option = document.createElement('option');
+            option.value = client.id;
+            option.textContent = client.name;
+            clientSelect.appendChild(option);
         });
     } catch (error) {
         console.error('Ошибка:', error);
@@ -180,14 +186,23 @@ async function getRoutes() {
         const response = await fetch(`${apiUrl}/routes/`);
         const routes = await response.json();
         const routeList = document.getElementById('routes-list');
+        const routeSelect = document.getElementById('order-route');
         routeList.innerHTML = '';
+        routeSelect.innerHTML = '';  // Очищаем старые данные
 
         routes.forEach(route => {
+            // Отображаем маршруты
             const li = document.createElement('li');
             li.innerHTML = `Маршрут: ${route.id}, Откуда: ${route.origin}, Куда: ${route.destination}, Расстояние: ${route.distance}
                 <button onclick="editRoute(${route.id})">✏️</button>
                 <button onclick="deleteRoute(${route.id})">🗑️</button>`;
             routeList.appendChild(li);
+
+            // Добавляем маршруты в выпадающий список для заказов
+            const option = document.createElement('option');
+            option.value = route.id;
+            option.textContent = `${route.origin} - ${route.destination}`;
+            routeSelect.appendChild(option);
         });
     } catch (error) {
         console.error('Ошибка:', error);
@@ -264,3 +279,58 @@ async function deleteRoute(routeId) {
         console.error('Ошибка:', error);
     }
 }
+
+// ===================== ЗАКАЗЫ =====================
+
+// Получение списка заказов
+async function getOrders() {
+    try {
+        const response = await fetch(`${apiUrl}/orders/`);
+        const orders = await response.json();
+        const orderList = document.getElementById('orders-list');
+        orderList.innerHTML = '';
+
+        orders.forEach(order => {
+            if (order.client && order.client.name) {
+                const li = document.createElement('li');
+                li.innerHTML = `Заказ ${order.id}: Груз: ${order.cargo}, Клиент: ${order.client.name}, Маршрут: ${order.route.origin} - ${order.route.destination}, Склад: ${order.warehouse.name}
+                    <button onclick="editOrder(${order.id})">✏️</button>
+                    <button onclick="deleteOrder(${order.id})">🗑️</button>`;
+                orderList.appendChild(li);
+            }
+        });
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+// Создание нового заказа
+document.getElementById('order-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    console.log("Отправка формы заказа...");
+
+    const clientId = document.getElementById('order-client').value;
+    const cargo = document.getElementById('order-cargo').value;
+    const routeId = document.getElementById('order-route').value;
+    const warehouseId = document.getElementById('order-warehouse').value;
+
+    const newOrder = { client_id: clientId, cargo: cargo, route_id: routeId, warehouse_id: warehouseId };
+
+    try {
+        const response = await fetch(`${apiUrl}/orders/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newOrder)
+        });
+
+        if (response.ok) {
+            alert('Заказ создан!');
+            getOrders();
+            document.getElementById('order-form').reset(); // Очищаем форму
+        } else {
+            alert('Ошибка при создании заказа');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+});
