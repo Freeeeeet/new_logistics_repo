@@ -8,16 +8,16 @@
 </head>
 <body>
   <div class="container">
-    <!-- Вкладки -->
     <div class="tabs">
       <button class="tab-button active" onclick="showTab('clients')">Клиенты</button>
       <button class="tab-button" onclick="showTab('orders')">Заказы</button>
     </div>
 
-    <!-- Контент вкладки -->
     <div id="clients" class="tab-content active">
       <h2>Создание и редактирование клиентов</h2>
       <form id="client-form">
+        <input type="hidden" id="client-id">  <!-- Скрытое поле для редактирования -->
+
         <label for="client-name">Имя:</label>
         <input type="text" id="client-name" name="name" required><br><br>
 
@@ -27,7 +27,7 @@
         <label for="client-phone">Телефон:</label>
         <input type="text" id="client-phone" name="phone" required><br><br>
 
-        <button type="submit">Создать клиента</button>
+        <button type="submit">Сохранить</button>
       </form>
 
       <div id="client-list">
@@ -36,7 +36,6 @@
       </div>
     </div>
 
-    <!-- Здесь будет контент для заказов (пока пустой) -->
     <div id="orders" class="tab-content">
       <h2>Создание и управление заказами</h2>
     </div>

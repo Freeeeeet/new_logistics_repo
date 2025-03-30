@@ -1,49 +1,60 @@
-const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Используем домен для бэкенда
+const apiUrl = 'https://ts.jijathecat.space/logistics/api';
 
 // Переключение вкладок
 function showTab(tabId) {
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.style.display = 'none';  // Скрываем все вкладки
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
     });
-    document.getElementById(tabId).style.display = 'block';  // Показываем выбранную вкладку
+    document.getElementById(tabId).style.display = 'block';
 }
 
-// Работа с клиентами: создание и получение
+// Создание клиента
 document.getElementById('client-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    const clientId = document.getElementById('client-id').value;  // Проверяем, редактируем или создаем
     const clientName = document.getElementById('client-name').value;
     const clientEmail = document.getElementById('client-email').value;
     const clientPhone = document.getElementById('client-phone').value;
 
-    const newClient = {
+    const clientData = {
         name: clientName,
         email: clientEmail,
         phone: clientPhone
     };
 
     try {
-        const response = await fetch(`${apiUrl}/clients/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newClient)
-        });
+        let response;
+        if (clientId) {
+            // Если есть clientId, то редактируем клиента
+            response = await fetch(`${apiUrl}/clients/${clientId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(clientData)
+            });
+        } else {
+            // Иначе создаем нового клиента
+            response = await fetch(`${apiUrl}/clients/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(clientData)
+            });
+        }
 
         if (response.ok) {
-            alert('Клиент создан!');
-            getClients(); // обновляем список клиентов
+            alert(clientId ? 'Клиент обновлен!' : 'Клиент создан!');
+            document.getElementById('client-form').reset();
+            document.getElementById('client-id').value = '';  // Очистка скрытого поля
+            getClients();
         } else {
-            alert('Ошибка при создании клиента');
+            alert('Ошибка при сохранении клиента');
         }
     } catch (error) {
         console.error('Ошибка:', error);
     }
 });
 
-// Функция для получения списка клиентов
+// Получение списка клиентов
 async function getClients() {
     try {
         const response = await fetch(`${apiUrl}/clients/`);
@@ -53,7 +64,11 @@ async function getClients() {
 
         clients.forEach(client => {
             const li = document.createElement('li');
-            li.textContent = `Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}`;
+            li.innerHTML = `
+                Имя: ${client.name}, Email: ${client.email}, Телефон: ${client.phone}
+                <button onclick="editClient(${client.id}, '${client.name}', '${client.email}', '${client.phone}')">✏ Редактировать</button>
+                <button onclick="deleteClient(${client.id})">🗑 Удалить</button>
+            `;
             clientList.appendChild(li);
         });
     } catch (error) {
@@ -61,8 +76,32 @@ async function getClients() {
     }
 }
 
-// Загружаем клиентов при загрузке страницы
-getClients();
+// Функция для редактирования клиента
+function editClient(id, name, email, phone) {
+    document.getElementById('client-id').value = id;
+    document.getElementById('client-name').value = name;
+    document.getElementById('client-email').value = email;
+    document.getElementById('client-phone').value = phone;
+}
 
-// Инициализация первой вкладки
-showTab('clients-tab');
+// Функция для удаления клиента
+async function deleteClient(clientId) {
+    if (!confirm('Вы уверены, что хотите удалить этого клиента?')) return;
+
+    try {
+        const response = await fetch(`${apiUrl}/clients/${clientId}`, { method: 'DELETE' });
+
+        if (response.ok) {
+            alert('Клиент удален!');
+            getClients();
+        } else {
+            alert('Ошибка при удалении клиента');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+// Загрузка клиентов при открытии страницы
+getClients();
+showTab('clients');
