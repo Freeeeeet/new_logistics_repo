@@ -331,8 +331,8 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
     const warehouseId = document.getElementById('order-warehouse').value;
 
     const newOrder = {
-        client: { name: clientName, email: clientEmail, phone: clientPhone },
-        cargo: { description: cargoDescription, weight: cargoWeight, volume: cargoVolume },
+        client: { client_name: clientName, client_email: clientEmail, client_phone: clientPhone },
+        cargo: { cargo_description: cargoDescription, cargo_weight: cargoWeight, cargo_volume: cargoVolume },
         route_id: routeId,
         warehouse_id: warehouseId
     };
