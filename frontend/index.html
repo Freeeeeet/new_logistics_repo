@@ -29,20 +29,22 @@
     <div id="orders-tab" class="tab-content">
     <h2>Управление заказами</h2>
     <form id="order-form">
-    <label for="order-client">Клиент:</label>
-    <input type="text" id="order-client" placeholder="Новый клиент" oninput="addNewOption('order-client', 'order-client')">
+            <label for="order-client">Клиент:</label>
+            <select id="order-client" required></select>
 
-    <label for="cargo-input">Груз:</label>
-    <input type="text" id="cargo-input" placeholder="Новый груз" oninput="addNewOption('order-cargo', 'cargo-input')">
+            <label for="cargo-input">Груз:</label>
+            <input type="text" id="cargo-input" placeholder="Описание груза" required>
+            <input type="number" id="cargo-weight" placeholder="Вес груза" required>
+            <input type="number" id="cargo-volume" placeholder="Объем груза" required>
 
-    <label for="order-route">Маршрут:</label>
-    <select id="order-route"></select>
+            <label for="order-route">Маршрут:</label>
+            <select id="order-route" required></select>
 
-    <label for="order-warehouse">Склад текущий:</label>
-    <select id="order-warehouse"></select>
+            <label for="order-warehouse">Склад текущий:</label>
+            <select id="order-warehouse" required></select>
 
-    <button type="submit">Создать заказ</button>
-</form>
+            <button type="submit">Создать заказ</button>
+        </form>
 
     <ul id="orders-list"></ul>
 </div>
