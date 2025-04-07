@@ -73,8 +73,18 @@ document.getElementById('client-form').addEventListener('submit', async (event) 
 
 // Получение списка клиентов
 async function getClients() {
+    const headers = {
+        'Content-Type': 'application/json',
+        };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const response = await fetch(`${apiUrl}/clients/`);
+        const response = await fetch(`${apiUrl}/clients/`, {
+            method: 'GET',
+            headers: headers
+        });
         const clients = await response.json();
         const clientList = document.getElementById('clients-list');
 
