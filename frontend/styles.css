@@ -59,3 +59,19 @@ li {
 .tab-content.active {
     display: block;
 }
+
+#logout-button {
+    position: fixed;
+    top: 20px; /* Расстояние от верхнего края */
+    right: 20px; /* Расстояние от правого края */
+    padding: 10px 20px;
+    background-color: #f44336; /* Красный цвет для кнопки */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#logout-button:hover {
+    background-color: #d32f2f; /* Тёмный оттенок красного при наведении */
+}

@@ -607,3 +607,11 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         console.error('Ошибка:', error);
     }
 });
+
+document.getElementById('logout-button').addEventListener('click', () => {
+    // Удаляем токен из localStorage
+    localStorage.removeItem('token');
+
+    // Обновляем страницу
+    location.reload();
+});
