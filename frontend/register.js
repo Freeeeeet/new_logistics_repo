@@ -4,7 +4,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     const username = document.getElementById('register-username').value;
     const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
-    const fullname = document.getElementById('register-fullname').value;
+    const full_name = document.getElementById('register-fullname').value;
 
     const registerData = { username, email, fullname, password };
 
