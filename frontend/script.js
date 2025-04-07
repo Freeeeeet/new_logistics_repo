@@ -486,7 +486,7 @@ async function getOrders() {
     if (warehouseLocation) filterParams.warehouse_location = warehouseLocation;
 
     const queryString = new URLSearchParams(filterParams).toString();
-    const url = `${apiUrl}/orders/filter` + (queryString ? '?' + queryString : '');
+    const url = `${apiUrl}/orders/filter/` + (queryString ? '?' + queryString : '');
 
     try {
         const response = await fetch(url);
