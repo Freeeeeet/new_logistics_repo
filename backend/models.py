@@ -99,6 +99,7 @@ class Order(Base):
     route_id = Column(Integer, ForeignKey('routes.id'), nullable=False)
     status_id = Column(Integer, ForeignKey('order_statuses.id'), nullable=False)
     created_at = Column(TIMESTAMP, default=datetime.datetime.now())
+    user_id = Column(Integer, ForeignKey("users.id"))
 
     # Связи с другими моделями
     client = relationship("Client", back_populates="orders")
