@@ -500,7 +500,7 @@ async function getOrders() {
     const headers = {
         'Content-Type': 'application/json',
     };
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     console.log('Токен:', token);
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
