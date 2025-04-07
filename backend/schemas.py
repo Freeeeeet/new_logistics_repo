@@ -243,6 +243,10 @@ class Warehouse(WarehouseBase):
 
 
 
-
+class OrderFilter(BaseModel):
+    client_name: Optional[str] = None
+    client_email: Optional[str] = None
+    warehouse_name: Optional[str] = None
+    warehouse_location: Optional[str] = None
 
 

@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from models import Order, Client, Cargo, Route, OrderStatus, Payment, Warehouse
-from schemas import OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails
+from schemas import OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails, OrderFilter
 from fastapi import HTTPException
 
 from datetime import datetime
@@ -217,3 +217,65 @@ async def delete_order(db: AsyncSession, order_id: int):
         await db.delete(db_order)
         await db.commit()
     return db_order
+
+
+async def get_filtered_orders(db: AsyncSession, filters: OrderFilter):
+    query = (
+        select(
+            Order.id.label("order_id"),
+            Payment.id.label("is_paid"),
+            Client.name.label("client_name"),
+            Client.email.label("client_email"),
+            OrderStatus.name.label("order_status"),
+            Route.origin.label("origin"),
+            Route.destination.label("destination"),
+            Warehouse.name.label("warehouse_name"),
+            Warehouse.location.label("warehouse_location"),
+            Cargo.description.label("cargo_description"),
+            Cargo.weight.label("cargo_weight"),
+            Cargo.volume.label("cargo_volume"),
+        )
+        .select_from(Order)
+        .outerjoin(Payment, Payment.order_id == Order.id)
+        .join(Client, Order.client_id == Client.id)
+        .join(OrderStatus, Order.status_id == OrderStatus.id)
+        .join(Route, Order.route_id == Route.id)
+        .join(Warehouse, Order.warehouse_id == Warehouse.id, isouter=True)
+        .join(Cargo, Order.cargo_id == Cargo.id)
+    )
+
+    conditions = []
+
+    if filters.client_name:
+        conditions.append(Client.name.ilike(f"%{filters.client_name}%"))
+    if filters.client_email:
+        conditions.append(Client.email.ilike(f"%{filters.client_email}%"))
+    if filters.warehouse_name:
+        conditions.append(Warehouse.name.ilike(f"%{filters.warehouse_name}%"))
+    if filters.warehouse_location:
+        conditions.append(Warehouse.location.ilike(f"%{filters.warehouse_location}%"))
+
+    if conditions:
+        query = query.where(and_(*conditions))
+
+    query = query.order_by(Order.id.desc())
+    result = await db.execute(query)
+    orders = result.fetchall()
+
+    return [
+        {
+            "order_id": order.order_id,
+            "is_paid": order.is_paid,
+            "client_name": order.client_name,
+            "client_email": order.client_email,
+            "order_status": order.order_status,
+            "origin": order.origin,
+            "destination": order.destination,
+            "warehouse_name": order.warehouse_name,
+            "warehouse_location": order.warehouse_location,
+            "cargo_description": order.cargo_description,
+            "cargo_weight": order.cargo_weight,
+            "cargo_volume": order.cargo_volume,
+        }
+        for order in orders
+    ]

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from schemas import Order, OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails
+from schemas import Order, OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails, OrderFilter
 
-from crud.orders_crud import get_all_orders, get_order_by_id, create_order, update_order, delete_order, create_order_full, update_order_full
+from crud.orders_crud import (get_all_orders, get_order_by_id, create_order, update_order, delete_order, create_order_full,
+                              update_order_full, get_filtered_orders)
 from typing import List
 
 router = APIRouter()
@@ -21,6 +22,10 @@ async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Order not found")
     return order
 
+
+@router.post("/filter", response_model=List[OrderWithDetails])
+async def filter_orders(filters: OrderFilter, db: AsyncSession = Depends(get_db)):
+    return await get_filtered_orders(db, filters)
 
 @router.post("/create", response_model=Order)
 async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db)):
