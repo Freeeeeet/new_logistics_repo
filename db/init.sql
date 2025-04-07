@@ -1,3 +1,39 @@
+-- Create users table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(255),
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_blocked BOOLEAN DEFAULT FALSE
+);
+
+-- Create tokens table
+CREATE TABLE tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR(255) NOT NULL,
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_revoked BOOLEAN DEFAULT FALSE
+);
+
+-- Create roles table
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create user_roles table
+CREATE TABLE user_roles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    role_id INTEGER REFERENCES roles(id) ON DELETE CASCADE
+);
+
 -- Создаем таблицу статусов заказов, она будет ссылаться на себя
 CREATE TABLE order_statuses (
     id SERIAL PRIMARY KEY,
@@ -57,7 +93,8 @@ CREATE TABLE orders (
     warehouse_id INT REFERENCES warehouses(id) ON DELETE SET NULL,
     route_id INT REFERENCES routes(id) ON DELETE CASCADE,
     status_id INT REFERENCES order_statuses(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id IN REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Создаем таблицу назначений заказов

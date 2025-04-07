@@ -1,7 +1,7 @@
 # models.py
 import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, TIMESTAMP
+from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, TIMESTAMP, Boolean
 from sqlalchemy.orm import relationship, declarative_base
 
 
@@ -153,3 +153,55 @@ class Payment(Base):
 
     # Связь с заказами
     orders = relationship("Order", back_populates="payments")
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    full_name = Column(String(255))
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    updated_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    is_blocked = Column(Boolean, default=False)
+
+    # Связь с заказами
+    orders = relationship("Order", back_populates="users")
+    user_roles = relationship("UserRole", back_populates="users")
+
+
+class Token(Base):
+    __tablename__ = "tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    token = Column(String, nullable=False)
+    issued_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    is_revoked = Column(Boolean, default=False)
+
+    users = relationship("User", back_populates="tokens")
+
+
+class Role(Base):
+    __tablename__ = 'roles'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), nullable=False)
+    description = Column(String(50), nullable=False)
+    created_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+
+    # Связь с заказами
+    user_roles = relationship("UserRole", back_populates="roles")
+
+
+class UserRole(Base):
+    __tablename__ = 'user_roles'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    role_id = Column(Integer, ForeignKey("roles.id"))
+
+    # Связь с заказами
+    roles = relationship("Role", back_populates="user_roles")
+    users = relationship("User", back_populates="user_roles")
