@@ -1,4 +1,4 @@
-from pydantic import BaseModel, condecimal, field_validator, EmailStr
+from pydantic import BaseModel, condecimal, field_validator, EmailStr, Field
 from datetime import datetime
 from typing import Optional, Union
 from decimal import Decimal
@@ -249,4 +249,40 @@ class OrderFilter(BaseModel):
     warehouse_name: Optional[str] = None
     warehouse_location: Optional[str] = None
 
+
+class UserCreateRequest(BaseModel):
+    username: str = Field(..., pattern=r'^[A-Za-z0-9_-]{3,20}$',
+                          description="Must be 3-20 characters: letters, numbers, _ and - only.",
+                          examples=["RyanGosling123"])
+    email: EmailStr = Field(..., description="Must be valid e-mail address.", examples=["gosling@gmail.com"])
+    full_name: str = Field(..., pattern=r'^[\w\sа-яА-ЯёЁ-]{1,50}$',
+                           description="Must be 1-50 characters: letters (any language), numbers, spaces, and - only.",
+                           examples=["Ryan Gosling"])
+    password: str = Field(..., pattern=r'^.{8,50}$',
+                          description="Password must be between 8 and 50 characters.", examples=["StrongPass123"])
+
+    class Config:
+        from_attributes = True
+
+
+class UserCreateResponse(BaseModel):
+    success: bool
+
+    class Config:
+        from_attributes = True
+
+
+class LoginUserRequest(BaseModel):
+    username: str = Field(..., pattern=r'^[A-Za-z0-9_-]{3,20}$',
+                          description="Must be 3-20 characters: letters, numbers, _ and - only.",
+                          examples=["RyanGosling123"])
+    password: str = Field(..., pattern=r'^.{8,50}$',
+                          description="Password must be between 8 and 50 characters.", examples=["StrongPass123"])
+
+    class Config:
+        from_attributes = True
+
+
+class LoginUserResponse(BaseModel):
+    token: str
 
