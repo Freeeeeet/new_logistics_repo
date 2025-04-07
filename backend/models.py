@@ -113,6 +113,9 @@ class Order(Base):
     # Связь с оплатами
     payments = relationship("Payment", back_populates="orders")
 
+    # Связб с юзерами
+    users = relationship("User", back_populates="orders")
+
 
 class OrderAssignment(Base):
     __tablename__ = 'order_assignments'
