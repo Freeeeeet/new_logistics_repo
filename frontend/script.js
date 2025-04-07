@@ -3,6 +3,15 @@ const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Бэкенд н�
 // Ждем загрузки DOM перед выполнением
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM загружен!");
+
+    const token = localStorage.getItem('token');
+
+    // Проверяем, если нет токена, перенаправляем на страницу логина
+    if (!token) {
+        alert('Пожалуйста, войдите в систему');
+        window.location.href = 'login.html'; // Перенаправляем на страницу входа
+    }
+
     showTab('clients-tab');
     getClients();
     getRoutes();
