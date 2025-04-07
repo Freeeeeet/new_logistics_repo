@@ -122,7 +122,7 @@ async function editClient(clientId) {
             headers['Authorization'] = `Bearer ${token}`;
     }
     try {
-        const response = await fetch(`${apiUrl}/clients/${clientId}`, method: 'GET', headers: headers);
+        const response = await fetch(`${apiUrl}/clients/${clientId}`,{ method: 'GET', headers: headers});
         const client = await response.json();
 
         console.log(`Выбрали клиента ID ${clientId} для редактирования`);
