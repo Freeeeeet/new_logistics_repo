@@ -220,31 +220,56 @@ async def delete_order(db: AsyncSession, order_id: int):
     return db_order
 
 
-async def get_filtered_orders(db: AsyncSession, filters: OrderFilter):
-    query = (
-        select(
-            Order.id.label("order_id"),
-            Payment.id.label("is_paid"),
-            Client.name.label("client_name"),
-            Client.email.label("client_email"),
-            OrderStatus.name.label("order_status"),
-            Route.origin.label("origin"),
-            Route.destination.label("destination"),
-            Warehouse.name.label("warehouse_name"),
-            Warehouse.location.label("warehouse_location"),
-            Cargo.description.label("cargo_description"),
-            Cargo.weight.label("cargo_weight"),
-            Cargo.volume.label("cargo_volume"),
+async def get_filtered_orders(db: AsyncSession, filters: OrderFilter, user_id):
+    if user_id != 1:
+        query = (
+            select(
+                Order.id.label("order_id"),
+                Payment.id.label("is_paid"),
+                Client.name.label("client_name"),
+                Client.email.label("client_email"),
+                OrderStatus.name.label("order_status"),
+                Route.origin.label("origin"),
+                Route.destination.label("destination"),
+                Warehouse.name.label("warehouse_name"),
+                Warehouse.location.label("warehouse_location"),
+                Cargo.description.label("cargo_description"),
+                Cargo.weight.label("cargo_weight"),
+                Cargo.volume.label("cargo_volume"),
+            )
+            .select_from(Order)
+            .outerjoin(Payment, Payment.order_id == Order.id)
+            .join(Client, Order.client_id == Client.id)
+            .join(OrderStatus, Order.status_id == OrderStatus.id)
+            .join(Route, Order.route_id == Route.id)
+            .join(Warehouse, Order.warehouse_id == Warehouse.id, isouter=True)
+            .join(Cargo, Order.cargo_id == Cargo.id)
+            .where(Order.user_id == user_id)
         )
-        .select_from(Order)
-        .outerjoin(Payment, Payment.order_id == Order.id)
-        .join(Client, Order.client_id == Client.id)
-        .join(OrderStatus, Order.status_id == OrderStatus.id)
-        .join(Route, Order.route_id == Route.id)
-        .join(Warehouse, Order.warehouse_id == Warehouse.id, isouter=True)
-        .join(Cargo, Order.cargo_id == Cargo.id)
-    )
-
+    else:
+        query = (
+            select(
+                Order.id.label("order_id"),
+                Payment.id.label("is_paid"),
+                Client.name.label("client_name"),
+                Client.email.label("client_email"),
+                OrderStatus.name.label("order_status"),
+                Route.origin.label("origin"),
+                Route.destination.label("destination"),
+                Warehouse.name.label("warehouse_name"),
+                Warehouse.location.label("warehouse_location"),
+                Cargo.description.label("cargo_description"),
+                Cargo.weight.label("cargo_weight"),
+                Cargo.volume.label("cargo_volume"),
+            )
+            .select_from(Order)
+            .outerjoin(Payment, Payment.order_id == Order.id)
+            .join(Client, Order.client_id == Client.id)
+            .join(OrderStatus, Order.status_id == OrderStatus.id)
+            .join(Route, Order.route_id == Route.id)
+            .join(Warehouse, Order.warehouse_id == Warehouse.id, isouter=True)
+            .join(Cargo, Order.cargo_id == Cargo.id)
+        )
     conditions = []
 
     if filters.client_name:

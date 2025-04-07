@@ -42,7 +42,7 @@ async def filter_orders(
         warehouse_name=warehouse_name,
         warehouse_location=warehouse_location
     )
-    return await get_filtered_orders(db, filters)
+    return await get_filtered_orders(db, filters, user_id)
 
 @router.post("/create", response_model=Order)
 async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db), authorization: str = Header(None),):
