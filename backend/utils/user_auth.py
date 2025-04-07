@@ -21,5 +21,5 @@ async def check_user_auth_final(db, authorization):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token"
         )
-    return authed_user.id
+    return authed_user.user_id
 
