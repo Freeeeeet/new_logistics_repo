@@ -114,8 +114,16 @@ async function getClients() {
 
 // Редактирование клиента
 async function editClient(clientId) {
+     const headers = {
+        'Content-Type': 'application/json',
+        };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
-        const response = await fetch(`${apiUrl}/clients/${clientId}`);
+        const response = await fetch(`${apiUrl}/clients/${clientId}`,{ method: GET, headers: headers});
         const client = await response.json();
 
         console.log(`Выбрали клиента ID ${clientId} для редактирования`);
@@ -144,11 +152,18 @@ async function updateClient(clientId) {
         email: document.getElementById('client-email').value,
         phone: document.getElementById('client-phone').value
     };
+     const headers = {
+        'Content-Type': 'application/json',
+        };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
         const response = await fetch(`${apiUrl}/clients/${clientId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(updatedClient)
         });
 
@@ -168,9 +183,15 @@ async function updateClient(clientId) {
 // Удаление клиента
 async function deleteClient(clientId) {
     if (!confirm("Удалить клиента?")) return;
-
+     const headers = {
+        'Content-Type': 'application/json',
+        };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const response = await fetch(`${apiUrl}/clients/${clientId}`, { method: 'DELETE' });
+        const response = await fetch(`${apiUrl}/clients/${clientId}`, { method: 'DELETE' , headers: headers});
 
         if (response.ok) {
             alert('Клиент удалён!');
