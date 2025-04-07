@@ -6,7 +6,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     const password = document.getElementById('register-password').value;
     const full_name = document.getElementById('register-fullname').value;
 
-    const registerData = { username, email, fullname, password };
+    const registerData = { username, email, full_name, password };
 
     try {
         const response = await fetch('https://ts.jijathecat.space/logistics/api/users/register', {
