@@ -23,8 +23,20 @@ async def read_order(order_id: int, db: AsyncSession = Depends(get_db)):
     return order
 
 
-@router.post("/filter", response_model=List[OrderWithDetails])
-async def filter_orders(filters: OrderFilter, db: AsyncSession = Depends(get_db)):
+@router.get("/filter", response_model=List[OrderWithDetails])  # Изменили метод на GET
+async def filter_orders(
+    client_name: str = None,  # Пример параметров, которые можно передавать как query parameters
+    client_email: str = None,
+    warehouse_name: str = None,
+    warehouse_location: str = None,
+    db: AsyncSession = Depends(get_db)
+):
+    filters = OrderFilter(
+        client_name=client_name,
+        client_email=client_email,
+        warehouse_name=warehouse_name,
+        warehouse_location=warehouse_location
+    )
     return await get_filtered_orders(db, filters)
 
 @router.post("/create", response_model=Order)
