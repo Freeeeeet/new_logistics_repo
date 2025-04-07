@@ -9,11 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     getWarehouses();  // Получаем список складов
     getOrders();  // Получаем список заказов
     showTab('clients');
-    populateClientFilter();
-    populateWarehouseFilter();
-
 });
-    document.getElementById('apply-filters').addEventListener('click', filterOrders);
 
 // Переключение вкладок
 function showTab(tabId) {
@@ -476,65 +472,29 @@ async function getWarehouses() {
     }
 }
 
-async function populateClientFilter() {
-    try {
-        const response = await fetch(`${apiUrl}/clients/`);
-        const clients = await response.json();
-        const filterSelect = document.getElementById('filter-client');
+async function getOrders() {
+    const clientName = document.getElementById('filter-client-name').value.trim();
+    const clientEmail = document.getElementById('filter-client-email').value.trim();
+    const warehouseName = document.getElementById('filter-warehouse-name').value.trim();
+    const warehouseLocation = document.getElementById('filter-warehouse-location').value.trim();
 
-        clients.forEach(client => {
-            const option = document.createElement('option');
-            option.value = client.id;
-            option.textContent = client.name;
-            filterSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Ошибка при получении клиентов для фильтра:', error);
-    }
-}
+    let filterParams = {};
 
-async function populateWarehouseFilter() {
-    try {
-        const response = await fetch(`${apiUrl}/warehouses/`);
-        const warehouses = await response.json();
-        const filterSelect = document.getElementById('filter-warehouse');
+    if (clientName) filterParams.client_name = clientName;
+    if (clientEmail) filterParams.client_email = clientEmail;
+    if (warehouseName) filterParams.warehouse_name = warehouseName;
+    if (warehouseLocation) filterParams.warehouse_location = warehouseLocation;
 
-        warehouses.forEach(warehouse => {
-            const option = document.createElement('option');
-            option.value = warehouse.id;
-            option.textContent = warehouse.name;
-            filterSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Ошибка при получении складов для фильтра:', error);
-    }
-}
-
-async function filterOrders() {
-    const clientId = document.getElementById('filter-client').value;
-    const warehouseId = document.getElementById('filter-warehouse').value;
-
-    const filterData = {};
-    if (clientId) filterData.client_id = parseInt(clientId);
-    if (warehouseId) filterData.warehouse_id = parseInt(warehouseId);
+    const queryString = new URLSearchParams(filterParams).toString();
+    const url = `${apiUrl}/orders/` + (queryString ? '?' + queryString : '');
 
     try {
-        const response = await fetch(`${apiUrl}/orders/filter`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(filterData)
-        });
-
-        if (!response.ok) {
-            alert("Ошибка при фильтрации заказов");
-            return;
-        }
-
-        const filteredOrders = await response.json();
+        const response = await fetch(url);
+        const orders = await response.json();
         const orderList = document.getElementById('orders-list');
-        orderList.innerHTML = '';  // Очищаем текущие заказы
+        orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
 
-        for (let order of filteredOrders) {
+        for (let order of orders) {
             const li = document.createElement('li');
             li.innerHTML = `Заказ: ${order.order_id}, Клиент: ${order.client_name}, Маршрут: ${order.origin} - ${order.destination}, Склад: ${order.warehouse_name}, Статус: ${order.order_status}
                 <button onclick="editOrder(${order.order_id})">✏️</button>
@@ -542,6 +502,52 @@ async function filterOrders() {
             orderList.appendChild(li);
         }
     } catch (error) {
-        console.error('Ошибка при фильтрации заказов:', error);
+        console.error('Ошибка:', error);
     }
 }
+
+// Функция для создания нового заказа
+document.getElementById('order-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    console.log("Отправка формы заказа...");
+
+    const clientName = document.getElementById('order-client-name').value;
+    const clientEmail = document.getElementById('order-client-email').value;
+    const clientPhone = document.getElementById('order-client-phone').value;
+
+    const cargoDescription = document.getElementById('cargo-input').value;
+    const cargoWeight = document.getElementById('cargo-weight').value;
+    const cargoVolume = document.getElementById('cargo-volume').value;
+
+    const routeId = document.getElementById('order-route').value;
+    const warehouseId = document.getElementById('order-warehouse').value;
+
+    const newOrder = {
+        client_name: clientName,
+        client_email: clientEmail,
+        client_phone: clientPhone,
+        cargo_description: cargoDescription,
+        cargo_weight: cargoWeight,
+        cargo_volume: cargoVolume,
+        route_id: routeId,
+        warehouse_id: warehouseId
+    };
+
+    try {
+        const response = await fetch(`${apiUrl}/orders/create-full`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newOrder)
+        });
+
+        if (response.ok) {
+            alert('Заказ создан!');
+            getOrders();  // Обновляем список заказов
+            document.getElementById('order-form').reset(); // Очищаем форму
+        } else {
+            alert('Ошибка при создании заказа');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+});

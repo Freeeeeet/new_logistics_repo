@@ -48,20 +48,15 @@
             <button type="submit">Создать заказ</button>
         </form>
         <ul id="orders-list"></ul>
+        <form id="order-filter-form">
+        <input type="text" id="filter-client-name" placeholder="Имя клиента">
+        <input type="email" id="filter-client-email" placeholder="Email клиента">
+        <input type="text" id="filter-warehouse-name" placeholder="Название склада">
+        <input type="text" id="filter-warehouse-location" placeholder="Локация склада">
+        <button type="button" onclick="getOrders()">Фильтровать</button>
+    </form>
     </div>
-    <div id="order-filters" style="margin-bottom: 20px;">
-    <label for="filter-client">Фильтр по клиенту:</label>
-    <select id="filter-client">
-        <option value="">Все</option>
-    </select>
 
-    <label for="filter-warehouse">Фильтр по складу:</label>
-    <select id="filter-warehouse">
-        <option value="">Все</option>
-    </select>
-
-    <button id="apply-filters">Применить фильтр</button>
-</div>
 
     <!-- Вкладка "Маршруты" -->
     <div id="routes-tab" class="tab-content">
