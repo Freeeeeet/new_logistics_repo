@@ -293,71 +293,71 @@ async function deleteRoute(routeId) {
 // ===================== ЗАКАЗЫ =====================
 
 // Получение списка заказов
-async function getOrders() {
-    try {
-        const response = await fetch(`${apiUrl}/orders/`);
-        const orders = await response.json();
-        const orderList = document.getElementById('orders-list');
-        orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
-
-        for (let order of orders) {
-            const li = document.createElement('li');
-            li.innerHTML = `Заказ: ${order.order_id}, Клиент: ${order.client_name}, Маршрут: ${order.origin} - ${order.destination}, Склад: ${order.warehouse_name}, Статус: ${order.order_status}
-                <button onclick="editOrder(${order.order_id})">✏️</button>
-                <button onclick="deleteOrder(${order.order_id})">🗑️</button>`;
-            orderList.appendChild(li);
-        }
-    } catch (error) {
-        console.error('Ошибка:', error);
-    }
-}
-// ===================== ЗАКАЗЫ =====================
-
-// Создание нового заказа
-document.getElementById('order-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    console.log("Отправка формы заказа...");
-
-    const clientName = document.getElementById('order-client-name').value;
-    const clientEmail = document.getElementById('order-client-email').value;
-    const clientPhone = document.getElementById('order-client-phone').value;
-
-    const cargoDescription = document.getElementById('cargo-input').value;
-    const cargoWeight = document.getElementById('cargo-weight').value;
-    const cargoVolume = document.getElementById('cargo-volume').value;
-
-    const routeId = document.getElementById('order-route').value;
-    const warehouseId = document.getElementById('order-warehouse').value;
-
-    const newOrder = {
-    client_name: clientName,
-    client_email: clientEmail,
-    client_phone: clientPhone,
-    cargo_description: cargoDescription,
-    cargo_weight: cargoWeight,
-    cargo_volume: cargoVolume,
-    route_id: routeId,
-    warehouse_id: warehouseId
-    };
-
-    try {
-        const response = await fetch(`${apiUrl}/orders/create-full`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newOrder)
-        });
-
-        if (response.ok) {
-            alert('Заказ создан!');
-            getOrders();  // Обновляем список заказов
-            document.getElementById('order-form').reset(); // Очищаем форму
-        } else {
-            alert('Ошибка при создании заказа');
-        }
-    } catch (error) {
-        console.error('Ошибка:', error);
-    }
-});
+//async function getOrders() {
+//    try {
+//        const response = await fetch(`${apiUrl}/orders/`);
+//        const orders = await response.json();
+//        const orderList = document.getElementById('orders-list');
+//        orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
+//
+//        for (let order of orders) {
+//            const li = document.createElement('li');
+//            li.innerHTML = `Заказ: ${order.order_id}, Клиент: ${order.client_name}, Маршрут: ${order.origin} - ${order.destination}, Склад: ${order.warehouse_name}, Статус: ${order.order_status}
+//                <button onclick="editOrder(${order.order_id})">✏️</button>
+//                <button onclick="deleteOrder(${order.order_id})">🗑️</button>`;
+//            orderList.appendChild(li);
+//        }
+//    } catch (error) {
+//        console.error('Ошибка:', error);
+//    }
+//}
+//// ===================== ЗАКАЗЫ =====================
+//
+//// Создание нового заказа
+//document.getElementById('order-form').addEventListener('submit', async (event) => {
+//    event.preventDefault();
+//    console.log("Отправка формы заказа...");
+//
+//    const clientName = document.getElementById('order-client-name').value;
+//    const clientEmail = document.getElementById('order-client-email').value;
+//    const clientPhone = document.getElementById('order-client-phone').value;
+//
+//    const cargoDescription = document.getElementById('cargo-input').value;
+//    const cargoWeight = document.getElementById('cargo-weight').value;
+//    const cargoVolume = document.getElementById('cargo-volume').value;
+//
+//    const routeId = document.getElementById('order-route').value;
+//    const warehouseId = document.getElementById('order-warehouse').value;
+//
+//    const newOrder = {
+//    client_name: clientName,
+//    client_email: clientEmail,
+//    client_phone: clientPhone,
+//    cargo_description: cargoDescription,
+//    cargo_weight: cargoWeight,
+//    cargo_volume: cargoVolume,
+//    route_id: routeId,
+//    warehouse_id: warehouseId
+//    };
+//
+//    try {
+//        const response = await fetch(`${apiUrl}/orders/create-full`, {
+//            method: 'POST',
+//            headers: { 'Content-Type': 'application/json' },
+//            body: JSON.stringify(newOrder)
+//        });
+//
+//        if (response.ok) {
+//            alert('Заказ создан!');
+//            getOrders();  // Обновляем список заказов
+//            document.getElementById('order-form').reset(); // Очищаем форму
+//        } else {
+//            alert('Ошибка при создании заказа');
+//        }
+//    } catch (error) {
+//        console.error('Ошибка:', error);
+//    }
+//});
 
 // Редактирование заказа
 async function editOrder(orderId) {
