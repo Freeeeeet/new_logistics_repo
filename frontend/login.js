@@ -1,13 +1,13 @@
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById('login-email').value;
+    const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
-    const loginData = { email, password };
+    const loginData = { username, password };
 
     try {
-        const response = await fetch('https://ts.jijathecat.space/logistics/api/login', {
+        const response = await fetch('https://ts.jijathecat.space/logistics/api/users/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginData)
