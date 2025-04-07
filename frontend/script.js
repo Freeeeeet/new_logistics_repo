@@ -497,8 +497,19 @@ async function getOrders() {
     const queryString = new URLSearchParams(filterParams).toString();
     const url = `${apiUrl}/orders/filter/` + (queryString ? '?' + queryString : '');
 
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers, // Добавляем заголовки
+        });
         const orders = await response.json();
         const orderList = document.getElementById('orders-list');
         orderList.innerHTML = '';  // Очищаем список перед добавлением новых данных
