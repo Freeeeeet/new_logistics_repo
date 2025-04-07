@@ -114,9 +114,15 @@ async function getClients() {
 
 // Редактирование клиента
 async function editClient(clientId) {
-
+     const headers = {
+        'Content-Type': 'application/json',
+        };
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const response = await fetch(`${apiUrl}/clients/${clientId}`);
+        const response = await fetch(`${apiUrl}/clients/${clientId}`, method: 'GET', headers: headers);
         const client = await response.json();
 
         console.log(`Выбрали клиента ID ${clientId} для редактирования`);
