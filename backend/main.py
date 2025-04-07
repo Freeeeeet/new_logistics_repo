@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 from models import Base
-from routes import orders, cargo, order_assignment, clients, routes, warehouses  # Подключаем другие маршруты
+from routes import orders, cargo, order_assignment, clients, routes, warehouses, users  # Подключаем другие маршруты
 
 app = FastAPI(root_path="/logistics/api")
 
@@ -22,6 +22,7 @@ app.include_router(cargo.router, prefix="/cargo", tags=["cargo"])
 app.include_router(routes.router, prefix="/routes", tags=["routes"])
 app.include_router(order_assignment.router, prefix="/order_assignments", tags=["Order Assignments"])
 app.include_router(warehouses.router, prefix="/warehouses", tags=["warehouses"])
+app.include_router(users.router, prefix="/users", tags=["users"])
 
 
 # Создание таблиц при старте (только для отладки)
