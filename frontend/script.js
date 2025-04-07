@@ -3,7 +3,21 @@ const apiUrl = 'https://ts.jijathecat.space/logistics/api';  // Бэкенд н�
 // Ждем загрузки DOM перед выполнением
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM загружен!");
+    // Понимаем, что элемент уже загружен
+    const logoutButton = document.getElementById('logout-button');
 
+    // Проверяем, есть ли кнопка на странице
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            // Удаляем токен из localStorage
+            localStorage.removeItem('token');
+
+            // Обновляем страницу
+            location.reload();
+        });
+    } else {
+        console.error("Кнопка 'Выйти' не найдена!");
+    }
     const token = localStorage.getItem('token');
 
     // Проверяем, если нет токена, перенаправляем на страницу логина
