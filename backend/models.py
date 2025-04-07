@@ -166,8 +166,8 @@ class User(Base):
     email = Column(String(255), nullable=False)
     full_name = Column(String(255))
     password_hash = Column(String(255), nullable=False)
-    created_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
-    updated_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    created_at = Column(TIMESTAMP, default=datetime.datetime.now())
+    created_at = Column(TIMESTAMP, default=datetime.datetime.now())
     is_blocked = Column(Boolean, default=False)
 
     # Связь с заказами
@@ -182,7 +182,7 @@ class Token(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     token = Column(String, nullable=False)
-    issued_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    issued_at = Column(TIMESTAMP, default=datetime.datetime.now())
     is_revoked = Column(Boolean, default=False)
 
     users = relationship("User", back_populates="tokens")
@@ -194,7 +194,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
     description = Column(String(50), nullable=False)
-    created_at = Column(TIMESTAMP, default="CURRENT_TIMESTAMP")
+    created_at = Column(TIMESTAMP, default=datetime.datetime.now())
 
     # Связь с заказами
     user_roles = relationship("UserRole", back_populates="roles")
