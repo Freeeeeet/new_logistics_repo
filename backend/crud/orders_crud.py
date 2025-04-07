@@ -221,6 +221,7 @@ async def delete_order(db: AsyncSession, order_id: int):
 
 
 async def get_filtered_orders(db: AsyncSession, filters: OrderFilter, user_id):
+    print(f'user_id: {user_id}')
     if user_id != 1:
         query = (
             select(
@@ -242,7 +243,7 @@ async def get_filtered_orders(db: AsyncSession, filters: OrderFilter, user_id):
             .join(Client, Order.client_id == Client.id)
             .join(OrderStatus, Order.status_id == OrderStatus.id)
             .join(Route, Order.route_id == Route.id)
-            .join(Warehouse, Order.warehouse_id == Warehouse.id, isouter=True)
+            .join(Warehouse, Order.warehouse_id == Warehouse.id)
             .join(Cargo, Order.cargo_id == Cargo.id)
             .where(Order.user_id == user_id)
         )
