@@ -173,6 +173,7 @@ class User(Base):
     # Связь с заказами
     orders = relationship("Order", back_populates="users")
     user_roles = relationship("UserRole", back_populates="users")
+    tokens = relationship("Token", back_populates="users")
 
 
 class Token(Base):
