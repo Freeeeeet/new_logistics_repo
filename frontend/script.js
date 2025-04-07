@@ -45,11 +45,17 @@ document.getElementById('client-form').addEventListener('submit', async (event) 
     const clientPhone = document.getElementById('client-phone').value;
 
     const newClient = { name: clientName, email: clientEmail, phone: clientPhone };
-
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
         const response = await fetch(`${apiUrl}/clients/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(newClient)
         });
 
@@ -501,7 +507,6 @@ async function getOrders() {
         'Content-Type': 'application/json',
     };
     const token = localStorage.getItem('token');
-    console.log('Токен:', token);
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
