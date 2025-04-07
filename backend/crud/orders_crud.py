@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy import or_, and_
 from models import Order, Client, Cargo, Route, OrderStatus, Payment, Warehouse
 from schemas import OrderCreate, OrderUpdate, OrderCreateNorm, OrderWithDetails, OrderFilter
 from fastapi import HTTPException
