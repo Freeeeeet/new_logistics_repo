@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import schemas
 import models
@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=schemas.UserCreateResponse)
-def register_user(user: schemas.UserCreateRequest, db: Session = Depends(get_db)):
+def register_user(user: schemas.UserCreateRequest, db: AsyncSession = Depends(get_db)):
     existing_user = get_user_by_username(db=db, username=user.username)
     if existing_user:
         raise HTTPException(
@@ -28,7 +28,7 @@ def register_user(user: schemas.UserCreateRequest, db: Session = Depends(get_db)
 
 
 @router.post("/login", response_model=schemas.LoginUserResponse)
-def login_user(login_user: schemas.LoginUserRequest, db: Session = Depends(get_db)):
+def login_user(login_user: schemas.LoginUserRequest, db: AsyncSession = Depends(get_db)):
     user = authenticate_user(db, login_user.username, login_user.password)
     if not user:
         raise HTTPException(
