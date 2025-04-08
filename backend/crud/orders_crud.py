@@ -94,42 +94,42 @@ async def create_order(db: AsyncSession, order_data: OrderCreate, user_id):
 
 
 async def create_order_full(db: AsyncSession, order: OrderCreateNorm, user_id):
-    async with db.begin():  # Начинаем транзакцию
-        # 1. Создаем нового клиента
-        client = Client(
-            name=order.client_name,
-            email=order.client_email,
-            phone=order.client_phone
-        )
-        db.add(client)
+    # async with db.begin():  # Начинаем транзакцию
+    # 1. Создаем нового клиента
+    client = Client(
+        name=order.client_name,
+        email=order.client_email,
+        phone=order.client_phone
+    )
+    db.add(client)
 
-        # 2. Создаем новый груз
-        cargo = Cargo(
-            description=order.cargo_description,
-            weight=order.cargo_weight,
-            volume=order.cargo_volume
-        )
-        db.add(cargo)
+    # 2. Создаем новый груз
+    cargo = Cargo(
+        description=order.cargo_description,
+        weight=order.cargo_weight,
+        volume=order.cargo_volume
+    )
+    db.add(cargo)
 
-        # 3. Принудительно "флешим" транзакцию, чтобы получить ID для client и cargo
-        await db.flush()
+    # 3. Принудительно "флешим" транзакцию, чтобы получить ID для client и cargo
+    await db.flush()
 
-        # 4. Получаем статус заказа (например, 'В процессе')
-        status = 1
+    # 4. Получаем статус заказа (например, 'В процессе')
+    status = 1
 
-        # 5. Создаем новый заказ
-        order_data = Order(
-            client_id=client.id,
-            cargo_id=cargo.id,
-            route_id=order.route_id,
-            warehouse_id=order.warehouse_id,
-            status_id=status,
-            created_at=datetime.now(),
-            user_id=user_id
-        )
-        db.add(order_data)
+    # 5. Создаем новый заказ
+    order_data = Order(
+        client_id=client.id,
+        cargo_id=cargo.id,
+        route_id=order.route_id,
+        warehouse_id=order.warehouse_id,
+        status_id=status,
+        created_at=datetime.now(),
+        user_id=user_id
+    )
+    db.add(order_data)
 
-    # await db.commit()
+    await db.commit()
 
     return order_data
 
