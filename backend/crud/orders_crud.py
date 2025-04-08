@@ -129,7 +129,7 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm, user_id):
         )
         db.add(order_data)
 
-    await db.commit()
+    # await db.commit()
 
     return order_data
 
