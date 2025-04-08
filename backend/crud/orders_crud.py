@@ -62,7 +62,7 @@ async def get_order_by_id(db: AsyncSession, order_id: int):
     return result.scalars().first()
 
 
-async def create_order(db: AsyncSession, order_data: OrderCreate):
+async def create_order(db: AsyncSession, order_data: OrderCreate, user_id):
     # Создание нового клиента, если клиент передан как словарь
     client = await db.get(Client, order_data.client_id) if isinstance(order_data.client_id, int) else None
     if client is None:
@@ -84,7 +84,8 @@ async def create_order(db: AsyncSession, order_data: OrderCreate):
         client_id=client.id,
         cargo_id=cargo.id,
         route_id=route.id,
-        status_id=status.id
+        status_id=status.id,
+        user_id=user_id
     )
     db.add(new_order)
     await db.commit()
@@ -92,7 +93,7 @@ async def create_order(db: AsyncSession, order_data: OrderCreate):
     return new_order
 
 
-async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
+async def create_order_full(db: AsyncSession, order: OrderCreateNorm, user_id):
     async with db.begin():  # Начинаем транзакцию
         # 1. Создаем нового клиента
         client = Client(
@@ -123,7 +124,8 @@ async def create_order_full(db: AsyncSession, order: OrderCreateNorm):
             route_id=order.route_id,
             warehouse_id=order.warehouse_id,
             status_id=status,
-            created_at=datetime.now()
+            created_at=datetime.now(),
+            user_id=user_id
         )
         db.add(order_data)
 

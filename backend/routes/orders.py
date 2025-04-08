@@ -47,12 +47,12 @@ async def filter_orders(
 @router.post("/create", response_model=Order)
 async def create_new_order(order: OrderCreate, db: AsyncSession = Depends(get_db), authorization: str = Header(None),):
     user_id = await check_user_auth_final(db, authorization)
-    return await create_order(db, order)
+    return await create_order(db, order, user_id)
 
 @router.post("/create-full", response_model=Order)
 async def create_new_order_full(order: OrderCreateNorm, db: AsyncSession = Depends(get_db), authorization: str = Header(None),):
     user_id = await check_user_auth_final(db, authorization)
-    return await create_order_full(db, order)
+    return await create_order_full(db, order, user_id)
 
 
 
