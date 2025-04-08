@@ -420,9 +420,17 @@ async function deleteRoute(routeId) {
 
 // Редактирование заказа
 async function editOrder(orderId) {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const response = await fetch(`${apiUrl}/orders/${orderId}`);
+        const response = await fetch(`${apiUrl}/orders/${orderId}`, {method: 'GET', headers: headers});
         const order = await response.json();
+
 
         console.log(`Выбрали заказ ID ${orderId} для редактирования`);
 
@@ -460,11 +468,18 @@ async function updateOrder(orderId) {
         route_id: document.getElementById('order-route').value,
         warehouse_id: document.getElementById('order-warehouse').value
     };
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
         const response = await fetch(`${apiUrl}/orders/${orderId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(updatedOrder)
         });
 
@@ -602,11 +617,17 @@ document.getElementById('order-form').addEventListener('submit', async (event) =
         route_id: routeId,
         warehouse_id: warehouseId
     };
-
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
         const response = await fetch(`${apiUrl}/orders/create-full`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(newOrder)
         });
 
